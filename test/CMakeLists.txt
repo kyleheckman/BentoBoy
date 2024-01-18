@@ -1,7 +1,7 @@
 project(test_scripts
     LANGUAGES C)
 
-    # LD_8 tests
+# LD_8 tests
 add_executable(test-ld8 test-ld8.c)
 target_link_libraries(test-ld8 isa)
 
@@ -17,3 +17,10 @@ target_link_libraries(test-ld16 isa)
 
 add_test(ld_16_imm test-ld16 1234)      # test saving immediate value to reg
 
+# INC_8 tests
+add_executable(test-inc test-inc.c)
+target_link_libraries(test-inc isa)
+
+add_test(inc_8_norm test-inc 1 0 0)
+add_test(inc_8_half_carry test-inc 1 15 32)
+add_test(inc_8_zero test-inc 1 255 160)
