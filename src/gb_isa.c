@@ -39,7 +39,7 @@ void ld_16(uint8_t* dest, uint16_t val) {
 /*--------------------------------------------------*/
 /* increments 8-bit register dest by 1 */
 void inc_8(uint8_t* dest, uint8_t* flags) {
-	*dest++;
+	*dest = *dest + 1;
 	
 	/* set flags */
 	*flags = (*flags & 0x70) | (!*dest << 7);				                /* set Z flag */
