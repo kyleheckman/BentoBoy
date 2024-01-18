@@ -1,14 +1,19 @@
 project(test_scripts
     LANGUAGES C)
-set(TEST_SCRIPTS test-ld8.c)
-add_executable(${PROJECT_NAME} ${TEST_SCRIPTS})
-target_link_libraries(${PROJECT_NAME} isa)
 
-# LD_8 tests, reg->reg
-add_test(ld_8_valid_1 test_scripts "1 35")    # accepts values in valid range 0-255
-add_test(ld_8_valid_2 test_scripts "1 170")
-add_test(ld_8_negative test_scripts "1 -100") # accepts negative values, interpretting as unsigned
-add_test(ld_8_large test_scripts "1 1234")    # accepts values larger than 255, will truncate to fit
+    # LD_8 tests
+add_executable(test-ld8 test-ld8.c)
+target_link_libraries(test-ld8 isa)
+
+add_test(ld_8_reg_1 test-ld8 1 35)    # test copying value from reg to reg
+add_test(ld_8_reg_2 test-ld8 1 170)
+add_test(ld_8_to_mem test-ld8 2 100)    # test saving value from reg to memory
+add_test(ld_8_imm test-ld8 3 96)        # test storing immediate value to reg
+add_test(ld_8_from_mem test-ld8 4 177)    # test copying value from memory to reg
 
 # LD_16 tests
-add_test(ld_16_imm test_scripts "2 1234")
+add_executable(test-ld16 test-ld16.c)
+target_link_libraries(test-ld16 isa)
+
+add_test(ld_16_imm test-ld16 1234)      # test saving immediate value to reg
+
