@@ -17,10 +17,26 @@ target_link_libraries(test-ld16 isa)
 
 add_test(ld_16_imm test-ld16 1234)      # test saving immediate value to reg
 
-# INC_8 tests
+# INC_8, INC_16 tests
 add_executable(test-inc test-inc.c)
 target_link_libraries(test-inc isa)
 
 add_test(inc_8_norm test-inc 1 0 0)
 add_test(inc_8_half_carry test-inc 1 15 32)
 add_test(inc_8_zero test-inc 1 255 160)
+
+add_test(inc_16_norm test-inc 2 357 0)
+add_test(inc_16_half_carry test-inc 2 255 0)
+add_test(inc_16_zero test-inc 2 65535 0)
+
+# DEC_8, DEC_16 tests
+add_executable(test-dec test-dec.c)
+target_link_libraries(test-dec isa)
+
+add_test(dec_8_norm test-dec 1 25 64)
+add_test(dec_8_half_carry test-dec 1 0 96)
+add_test(dec_8_zero test-dec 1 1 192)
+
+add_test(dec_16_norm test-dec 2 455 0)
+add_test(dec_16_half_carry test-dec 2 0 0)
+add_test(dec_16_zero test-dec 2 1 -)
