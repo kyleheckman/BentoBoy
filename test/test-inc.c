@@ -11,10 +11,10 @@ int main(int argc, char** argv)
     memset(regs, 0, 7);
 
     int test = atoi(argv[1]);
-    regs[0] = (uint8_t)atoi(argv[2]);
     uint8_t flags_test = (uint8_t)atoi(argv[3]);
 
-    if (test == 1) {    /*inc_8 test*/
+    if (test == 1) {        /*inc_8 test*/
+        regs[0] = (uint8_t)atoi(argv[2]);
         uint8_t old = regs[0];
         inc_8(&regs[0], &flags);
 
@@ -25,4 +25,16 @@ int main(int argc, char** argv)
         }
         return 1;
     }
+    else if (test == 2) {   /*inc_16 test*/
+        uint16_t old = (uint16_t)atoi(argv[2]);
+        regs[1] = old>>8;
+        regs[2] = old;
+        inc_16(&regs[1]);
+
+        if ((uint16_t)((regs[1] << 8) + regs[2]) == (uint16_t)(old + 1)) {
+            return 0;
+        }
+        return 1;
+    }
+    return 1;
 }
