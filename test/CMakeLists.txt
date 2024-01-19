@@ -40,3 +40,11 @@ add_test(dec_8_zero test-dec 1 1 192)
 add_test(dec_16_norm test-dec 2 455 0)
 add_test(dec_16_half_carry test-dec 2 0 0)
 add_test(dec_16_zero test-dec 2 1 -)
+
+# ADD_16 tests
+add_executable(test-add16 test-add16.c)
+target_link_libraries(test-add16 isa)
+
+add_test(add_16_norm test-add16 768 15 0)
+add_test(add_16_half_carry test-add16 255 255 32)
+add_test(add_16_carry test-add16 65535 1 48)

@@ -86,7 +86,7 @@ void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags) {
 
 	/* set flags */
 	*flags = (*flags & 0xe0) | (((int)(d16 + s16) > val) << 4);	    /* set CY flag */
-	*flags = (*flags & 0xd0) | (((d16 ^ s16 ^ val) & 0x1000) >> 6);	/* set H flag */
+	*flags = (*flags & 0xd0) | (((d16 ^ s16 ^ val) & 0x100) >> 3);	/* set H flag */
 	*flags = *flags & 0xb0;						                    /* unset N flag */
 }
 
