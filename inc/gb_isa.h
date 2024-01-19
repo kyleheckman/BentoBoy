@@ -33,12 +33,25 @@ void dec_8(uint8_t* dest, uint8_t* flags);
 void dec_16(uint8_t* dest);
 
 /* add & subtract */
+void add_8(uint8_t* dest, uint8_t src, int adc, uint8_t* flags);
+
 void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags);
 
 void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t* flags);
 
+void sub_8(uint8_t* dest, uint8_t src, int sbc, uint8_t* flags);
+
 /* bitwise functions */
 /*--------------------------------------------------*/
+/* logical operations */
+void land(uint8_t* dest, uint8_t src, uint8_t* flags);
+
+void lxor(uint8_t* dest, uint8_t src, uint8_t* flags);
+
+void lor(uint8_t* dest, uint8_t src, uint8_t* flags);
+
+void lcp(uint8_t dest, uint8_t src, uint8_t* flags);
+
 /* bitwise rotate */
 void rlca();
 

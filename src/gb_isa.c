@@ -61,6 +61,23 @@ void dec_16(uint8_t* dest) {
 }
 
 /*--------------------------------------------------*/
+/* add together dest & src (and CY if adc is set) and store results in dest */
+void add_8(uint8_t* dest, uint8_t src, int adc, uint8_t* flags) {
+    uint8_t cy = 0;
+    if (adc) {
+        cy = (*flags >> 4) & 0x1;
+    }
+    uint8_t old = *dest;
+	*dest = *dest + src + cy;
+
+	/* set flags */
+	*flags = (*flags & 0x70) | (!*dest << 7);								/* set Z flag */
+	*flags = *flags & 0xb0;													/* unset N flag */
+	*flags = (*flags & 0xd0) | (((*dest ^ src ^ cy ^ old) & 0x10) << 1);	/* set H flag */
+	*flags = (*flags & 0xe0) | (((int)(old + src + cy) > *dest) << 4);		/* set CY flag */
+}
+
+/*--------------------------------------------------*/
 /* add 16-bit values src & dest, store in dest */
 void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags) {
 	uint16_t d16 = (uint16_t)((*dest << 8) + *(dest+1));
@@ -85,6 +102,59 @@ void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t flags) {
 	*flags = (*flags & 0xe0) | (((int)(d16 + sp) > val) << 4);	    /* set CY flag */
 	*flags = (*flags & 0xd0) | (((d16 ^ sp ^ val) & 0x100) >> 3);	/* set H flag */
 	*flags = *flags & 0xb0;						                    /* unset N flag */
+}
+
+/*--------------------------------------------------*/
+/* subtract values of src (and CY if sbc set) from dest, store result in dest */
+void sub_8(uint8_t* dest, uint8_t src, int sbc, uint8_t* flags) {
+	uint8_t cy = 0;
+	if (sbc) {
+		cy = (*flags >> 4) & 0x1; 
+	}
+	uint8_t old = *dest;
+	*dest = *dest - src - cy;
+
+	/* set flags */
+	*flags = (*flags & 0x70) | (!*dest << 7);								/* set Z flag */
+	*flags = *flags | 0x40;													/* set N flag */
+	*flags = (*flags & 0xd0) | (((uint8_t)((old & 0xf) - ((src + cy) & 0xf)) & 0x10) << 1);	/* set H flag */
+	*flags = (*flags & 0xe0) | (((int)(old - src - cy) < 0) << 4);		/* set CY flag */
+}
+
+/*--------------------------------------------------*/
+/* calculates the bitwise AND of dest & src, stores result in dest */
+void land(uint8_t* dest, uint8_t src, uint8_t* flags) {
+	*dest = *dest & src;
+
+	/* set flags */
+	*flags = 0x20 | (!*dest << 7);	/* set Z flag, H flag always set */
+}
+
+/*--------------------------------------------------*/
+/* calculates the bitwise XOR of dest & src, stores result in dest */
+void lxor(uint8_t* dest, uint8_t src, uint8_t* flags) {
+	*dest = *dest ^ src;
+
+	/* set flags */
+	*flags = 0 | (!*dest << 7);		/* set Z flag */
+}
+
+/*--------------------------------------------------*/
+/* calculates the bitwise OR of dest & src, stores result in dest */
+void lor(uint8_t* dest, uint8_t src, uint8_t* flags) {
+	*dest = *dest | src;
+
+	/* set flags */
+	*flags = 0 | (!*dest << 7);
+}
+
+/*--------------------------------------------------*/
+/* compares dest & src */
+/* set Z iff equal, set H if src < dest, set CY if src > dest*/
+void lcp(uint8_t dest, uint8_t src, uint8_t* flags) {
+	if (*dest == src) {*flags = 0xc0;}
+	if (*dest < src) {*flags = 0x50;}
+	if (*dest > src) {*flags = 0x60;}
 }
 
 /*--------------------------------------------------*/
