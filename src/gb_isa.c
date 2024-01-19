@@ -75,6 +75,19 @@ void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags) {
 }
 
 /*--------------------------------------------------*/
+/* add value of sp to 16-bit reg pair dest */
+void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t flags) {
+	uint16_t d16 = (uint16_t)((*dest << 8) + *(dest+1));
+	uint16_t val = d16 + sp;
+	ld_16(dest, val);
+
+	/* set flags */
+	*flags = (*flags & 0xe0) | (((int)(d16 + sp) > val) << 4);	    /* set CY flag */
+	*flags = (*flags & 0xd0) | (((d16 ^ sp ^ val) & 0x100) >> 3);	/* set H flag */
+	*flags = *flags & 0xb0;						                    /* unset N flag */
+}
+
+/*--------------------------------------------------*/
 /* rotates reg A 1 bit left, stores A[7] in CY */
 /*void rlca() {
 	uint8_t cy = regs[0] >> 7;

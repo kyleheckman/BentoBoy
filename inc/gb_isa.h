@@ -35,6 +35,8 @@ void dec_16(uint8_t* dest);
 /* add & subtract */
 void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags);
 
+void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t* flags);
+
 /* bitwise functions */
 /*--------------------------------------------------*/
 /* bitwise rotate */
