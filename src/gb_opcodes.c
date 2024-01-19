@@ -149,5 +149,73 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint8_t* flags, uint
         case 0x7e: ld_8(&regs[rA], *deref(ram, regs[rH], regs[rL])); break;
         case 0x7f: ld_8(&regs[rA], regs[rA]); break;
         /*-------------------------------------------------------*/
+        case 0x80: add_8(&regs[rA], regs[rB], 0, flags); break;
+        case 0x81: add_8(&regs[rA], regs[rC], 0, flags); break;
+        case 0x82: add_8(&regs[rA], regs[rD], 0, flags); break;
+        case 0x83: add_8(&regs[rA], regs[rE], 0, flags); break;
+        case 0x84: add_8(&regs[rA], regs[rH], 0, flags); break;
+        case 0x85: add_8(&regs[rA], regs[rL], 0, flags); break;
+        case 0x86: add_8(&regs[rA], *deref(ram, regs[rH], regs[rL]), 0, flags); break;
+        case 0x87: add_8(&regs[rA], regs[rA], 0, flags); break;
+        case 0x88: add_8(&regs[rA], regs[rB], 1, flags); break;
+        case 0x89: add_8(&regs[rA], regs[rC], 1, flags); break;
+        case 0x8a: add_8(&regs[rA], regs[rD], 1, flags); break;
+        case 0x8b: add_8(&regs[rA], regs[rE], 1, flags); break;
+        case 0x8c: add_8(&regs[rA], regs[rH], 1, flags); break;
+        case 0x8d: add_8(&regs[rA], regs[rL], 1, flags); break;
+        case 0x8e: add_8(&regs[rA], *deref(ram, regs[rH], regs[rL]), 1, flags); break;
+        case 0x8f: add_8(&regs[rA], regs[rA], 1, flags); break;
+        /*-------------------------------------------------------*/
+        case 0x90: sub_8(&regs[rA], regs[rB], 0, flags); break;
+        case 0x91: sub_8(&regs[rA], regs[rC], 0, flags); break;
+        case 0x92: sub_8(&regs[rA], regs[rD], 0, flags); break;
+        case 0x93: sub_8(&regs[rA], regs[rE], 0, flags); break;
+        case 0x94: sub_8(&regs[rA], regs[rH], 0, flags); break;
+        case 0x95: sub_8(&regs[rA], regs[rL], 0, flags); break;
+        case 0x96: sub_8(&regs[rA], *deref(ram, regs[rH], regs[rL]), 0, flags); break;
+        case 0x97: sub_8(&regs[rA], regs[rA], 0, flags); break;
+        case 0x98: sub_8(&regs[rA], regs[rB], 1, flags); break;
+        case 0x99: sub_8(&regs[rA], regs[rC], 1, flags); break;
+        case 0x9a: sub_8(&regs[rA], regs[rD], 1, flags); break;
+        case 0x9b: sub_8(&regs[rA], regs[rE], 1, flags); break;
+        case 0x9c: sub_8(&regs[rA], regs[rH], 1, flags); break;
+        case 0x9d: sub_8(&regs[rA], regs[rL], 1, flags); break;
+        case 0x9e: sub_8(&regs[rA], *deref(ram, regs[rH], regs[rL]), 1, flags); break;
+        case 0x9f: sub_8(&regs[rA], regs[rA], 1, flags); break;
+        /*-------------------------------------------------------*/
+        case 0xa0: land(&regs[rA], regs[rB], flags); break;
+        case 0xa1: land(&regs[rA], regs[rC], flags); break;
+        case 0xa2: land(&regs[rA], regs[rD], flags); break;
+        case 0xa3: land(&regs[rA], regs[rE], flags); break;
+        case 0xa4: land(&regs[rA], regs[rH], flags); break;
+        case 0xa5: land(&regs[rA], regs[rL], flags); break;
+        case 0xa6: land(&regs[rA], *deref(ram, regs[rH], regs[rL]), flags); break;
+        case 0xa7: land(&regs[rA], regs[rA], flags); break;
+        case 0xa8: lxor(&regs[rA], regs[rB], flags); break;
+        case 0xa9: lxor(&regs[rA], regs[rC], flags); break;
+        case 0xaa: lxor(&regs[rA], regs[rD], flags); break;
+        case 0xab: lxor(&regs[rA], regs[rE], flags); break;
+        case 0xac: lxor(&regs[rA], regs[rH], flags); break;
+        case 0xad: lxor(&regs[rA], regs[rL], flags); break;
+        case 0xae: lxor(&regs[rA], *deref(ram, regs[rH],regs[rL]), flags); break;
+        case 0xaf: lxor(&regs[rA], regs[rA], flags); break;
+        /*-------------------------------------------------------*/
+        case 0xb0: lor(&regs[rA], regs[rB], flags); break;
+        case 0xb1: lor(&regs[rA], regs[rC], flags); break;
+        case 0xb2: lor(&regs[rA], regs[rD], flags); break;
+        case 0xb3: lor(&regs[rA], regs[rE], flags); break;
+        case 0xb4: lor(&regs[rA], regs[rH], flags); break;
+        case 0xb5: lor(&regs[rA], regs[rL], flags); break;
+        case 0xb6: lor(&regs[rA], *deref(ram, regs[rH], regs[rL]), flags); break;
+        case 0xb7: lor(&regs[rA], regs[rA], flags); break;
+        case 0xb8: lcp(regs[rA], regs[rB], flags); break;
+        case 0xb9: lcp(regs[rA], regs[rC], flags); break;
+        case 0xba: lcp(regs[rA], regs[rD], flags); break;
+        case 0xbb: lcp(regs[rA], regs[rE], flags); break;
+        case 0xbc: lcp(regs[rA], regs[rH], flags); break;
+        case 0xbd: lcp(regs[rA], regs[rL], flags); break;
+        case 0xbe: lcp(regs[rA], *deref(ram, regs[rH], reg[rL]), flags); break;
+        case 0xbf: lcp(regs[rA], regs[rA], flags); break;
+        /*-------------------------------------------------------*/
 	}
 }
