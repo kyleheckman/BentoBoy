@@ -1,28 +1,6 @@
 #include "gb_isa.h"
 #define PROG_START 0x150
 
-/*int exec_instr(uint8_t opcode, uint8_t flags) {
-	switch (opcode)
-	{
-		case 0: break;	 NOP 
-		case 0x01: ld_16(&regs[1], fetch16()); break;
-		case 0x02: ld_8(deref(regs[1], regs[2]), regs[0]); break;
-		case 0x03: inc_16(&regs[1]); break;
-		case 0x04: inc_8(&regs[1]); break;
-		case 0x05: dec_8(&regs[1]); break;
-		case 0x06: ld_8(&regs[1], fetch8()); break;
-		case 0x07: rlca(); break;
-	    case 0x08: ld_16(deref(fetch8(), fetch8()), sp); break;
-		case 0x09: add_16(&regs[5], &regs[1]); break;
-		case 0x0a: ld_8(&regs[0], *deref(regs[1], regs[2])); break;
-		case 0x0b: dec_16(&regs[1], flags); break;
-		case 0x0c: inc_8(&regs[2]); break;
-		case 0x0d: dec_8(&regs[2], flags); break;
-		case 0x0e: ld_8(&regs[2], fetch8()); break;
-		case 0x0f: rrca(); break;
-	}
-}*/
-
 /*--------------------------------------------------*/
 /* copies the val from src into dest */
 void ld_8(uint8_t* dest, uint8_t src) {
@@ -34,6 +12,12 @@ void ld_8(uint8_t* dest, uint8_t src) {
 void ld_16(uint8_t* dest, uint16_t val) {
 	*dest = (uint8_t)(val >> 8);
 	*(dest+1) = (uint8_t)(val & 0xff);
+}
+
+/*--------------------------------------------------*/
+/* copies 16-bit value to stack pointer*/
+ld_sp(uint16_t* sp, uint16_t val) {
+    *sp = val;
 }
 
 /*--------------------------------------------------*/

@@ -1,10 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-/* instruction execution */
-/*--------------------------------------------------*/
-int exec_instr(uint8_t opcode);
-
 /* fetch instructions from program counter */
 /*--------------------------------------------------*/
 uint8_t fetch8(uint8_t* ram, uint16_t* pc);
@@ -22,6 +18,8 @@ uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low);
 void ld_8(uint8_t* dest, uint8_t src);
 
 void ld_16(uint8_t* dest, uint16_t val);
+
+void ld_sp(uint16_t* sp, uint16_t val);
 
 /* arithmetic instructions */
 /*--------------------------------------------------*/
