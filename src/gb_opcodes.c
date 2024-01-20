@@ -217,5 +217,27 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint8_t* flags, uint
         case 0xbe: lcp(regs[rA], *deref(ram, regs[rH], reg[rL]), flags); break;
         case 0xbf: lcp(regs[rA], regs[rA], flags); break;
         /*-------------------------------------------------------*/
+        case 0xc0: /* not implemented */
+        case 0xc1: pop(&regs[rB], sp, ram); break;
+        case 0xc2: jp(fetch16(ram, pc), pc, flags, 0); break;
+        case 0xc3: jp(fetch16(ram, pc), pc, flags, -1); break;
+        case 0xc4: /* not implemented */
+        case 0xc5: push(&regsd[rB], sp, ram); break;
+        case 0xc6: add_8(&regs[rA], fetch8(ram, pc), 0, flags); break;
+        case 0xc7: /* not implemented */
+        case 0xc8: /* not imlpemented */
+        case 0xc9: /* not implemented */
+        case 0xca: jp(fetch16(ram, pc), pc, flags, 1); break;
+        case 0xcb: exec_cb(fetch8(ram, pc), regs, ram, flags, sp, pc); break;
+        case 0xcc: /* not implemented */
+        case 0xcd: /* not implemented */
+        case 0xce: add_8(&regs[rA], fetch8(ram, pc), 1, flags); break;
+        case 0xcf: /* not implemented */
+        /*-------------------------------------------------------*/
+
 	}
+}
+
+exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint8_t* flags, uint16_t* sp, uint16_t* pc) {
+
 }
