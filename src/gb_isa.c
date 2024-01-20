@@ -2,6 +2,19 @@
 #define PROG_START 0x150
 
 /*--------------------------------------------------*/
+/* loads dest into pc if flags meet cond */
+/* default is cond not in option is no test condition */
+void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond) {
+	switch (cond) {
+		case 0: if (!(*flags & 0x80)) {*pc = dest;} break;	/* NZ: Z == 0 */
+		case 1: if (*flags & 0x80) {*pc = dest;} break;		/* Z == 1 */
+		case 2: if (!(*flags * 0x10)) {*pc = dest;} break;	/* NC: CY == 0 */
+		case 3: if (*flags & 0x10) {*pc = dest;} break;		/* CY == 1 */
+		default: *pc = dest; break;
+	}
+}
+
+/*--------------------------------------------------*/
 /* copies the val from src into dest */
 void ld_8(uint8_t* dest, uint8_t src) {
 	*dest = src;
@@ -16,8 +29,28 @@ void ld_16(uint8_t* dest, uint16_t val) {
 
 /*--------------------------------------------------*/
 /* copies 16-bit value to stack pointer*/
-ld_sp(uint16_t* sp, uint16_t val) {
+void ld_sp(uint16_t* sp, uint16_t val) {
     *sp = val;
+}
+
+/*--------------------------------------------------*/
+/* push 16-bit value to stack */
+/* inserts srcH @ sp-1, srcL @ sp-2*/
+void push(uint8_t* src, uint16_t* sp, uint8_t* ram) {
+	*sp = *sp - 1;
+	ram[*sp] = *src;
+	*sp = *sp - 1;
+	ram[*sp] = *(src+1);
+}
+
+/*--------------------------------------------------*/
+/* pop 16-bit value from stack, store at dest */
+/* pops in order low byte then high byte*/
+void pop(uint8_t* dest, uint16_t* sp, uint8_t* ram) {
+	*(dest+1) = ram[*sp];
+	*sp = *sp + 1;
+	*dest = ram[*sp];
+	*sp = *sp + 1;
 }
 
 /*--------------------------------------------------*/

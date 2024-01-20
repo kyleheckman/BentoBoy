@@ -13,6 +13,10 @@ uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low);
 
 /* ISA functions */
 
+/* jump instructions */
+/*--------------------------------------------------*/
+void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond);
+
 /* load & move instructions */
 /*--------------------------------------------------*/
 void ld_8(uint8_t* dest, uint8_t src);
@@ -20,6 +24,10 @@ void ld_8(uint8_t* dest, uint8_t src);
 void ld_16(uint8_t* dest, uint16_t val);
 
 void ld_sp(uint16_t* sp, uint16_t val);
+
+void push(uint8_t* src, uint16_t* sp, uint8_t* ram);
+
+void pop(uint8_t* dest, uint16_t* sp, uint8_t* ram);
 
 /* arithmetic instructions */
 /*--------------------------------------------------*/
