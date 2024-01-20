@@ -15,6 +15,19 @@ void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond) {
 }
 
 /*--------------------------------------------------*/
+/* short jump, increments PC by ofs*/
+/* default is cond not in option is no test condition */
+void jr(int8_t ofs, uint16_t* pc, uint8_t* flags, int cond) {
+	switch (cond) {
+		case 0: if (!(*flags & 0x80)) {*pc = *pc + ofs;} break;	/* NZ: Z == 0 */
+		case 1: if (*flags & 0x80) {*pc = *pc + ofs;} break;		/* Z == 1 */
+		case 2: if (!(*flags * 0x10)) {*pc = *pc + ofs;} break;	/* NC: CY == 0 */
+		case 3: if (*flags & 0x10) {*pc = *pc + ofs;} break;		/* CY == 1 */
+		default: *pc = *pc + ofs; break;
+	}
+}
+
+/*--------------------------------------------------*/
 /* copies the val from src into dest */
 void ld_8(uint8_t* dest, uint8_t src) {
 	*dest = src;

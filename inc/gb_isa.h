@@ -17,6 +17,8 @@ uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low);
 /*--------------------------------------------------*/
 void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond);
 
+void jr(uint16_t dest, uint16_t* pc uint8_t* flags, int cond);
+
 /* load & move instructions */
 /*--------------------------------------------------*/
 void ld_8(uint8_t* dest, uint8_t src);
