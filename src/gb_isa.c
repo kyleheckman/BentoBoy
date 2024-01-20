@@ -59,9 +59,9 @@ void inc_8(uint8_t* dest, uint8_t* flags) {
 	*dest = *dest + 1;
 	
 	/* set flags */
-	*flags = (*flags & 0x70) | (!*dest << 7);				                /* set Z flag */
+	*flags = (*flags & 0x70) | (!*dest << 7);								/* set Z flag */
 	*flags = (*flags & 0xd0) | (((*dest ^ (*dest - 1) ^ 1) & 0x10) << 1);	/* set H flag */
-	*flags = *flags & 0xb0;							                        /* unset N flag */
+	*flags = *flags & 0xb0; 												/* unset N flag */
 }
 
 /*--------------------------------------------------*/
@@ -79,9 +79,9 @@ void dec_8(uint8_t* dest, uint8_t* flags) {
 	*dest = *dest - 1;
 
 	/* set flags */
-	*flags = (*flags & 0x70) | (!*dest << 7);				            /* set Z flag */
+	*flags = (*flags & 0x70) | (!*dest << 7);							/* set Z flag */
 	*flags = (*flags & 0xd0) | (((int)((*dest+1) & 0xf) - 1 < 0) << 5);	/* set H flag */
-	*flags = *flags | 0x40;							                    /* set N flag */
+	*flags = *flags | 0x40;												/* set N flag */
 }
 
 /*--------------------------------------------------*/
@@ -119,9 +119,9 @@ void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags) {
 	ld_16(dest, val);
 
 	/* set flags */
-	*flags = (*flags & 0xe0) | (((int)(d16 + s16) > val) << 4);	    /* set CY flag */
+	*flags = (*flags & 0xe0) | (((int)(d16 + s16) > val) << 4);		/* set CY flag */
 	*flags = (*flags & 0xd0) | (((d16 ^ s16 ^ val) & 0x100) >> 3);	/* set H flag */
-	*flags = *flags & 0xb0;						                    /* unset N flag */
+	*flags = *flags & 0xb0;											/* unset N flag */
 }
 
 /*--------------------------------------------------*/
@@ -132,9 +132,9 @@ void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t flags) {
 	ld_16(dest, val);
 
 	/* set flags */
-	*flags = (*flags & 0xe0) | (((int)(d16 + sp) > val) << 4);	    /* set CY flag */
+	*flags = (*flags & 0xe0) | (((int)(d16 + sp) > val) << 4);		/* set CY flag */
 	*flags = (*flags & 0xd0) | (((d16 ^ sp ^ val) & 0x100) >> 3);	/* set H flag */
-	*flags = *flags & 0xb0;						                    /* unset N flag */
+	*flags = *flags & 0xb0;											/* unset N flag */
 }
 
 /*--------------------------------------------------*/
@@ -148,10 +148,10 @@ void sub_8(uint8_t* dest, uint8_t src, int sbc, uint8_t* flags) {
 	*dest = *dest - src - cy;
 
 	/* set flags */
-	*flags = (*flags & 0x70) | (!*dest << 7);								/* set Z flag */
-	*flags = *flags | 0x40;													/* set N flag */
+	*flags = (*flags & 0x70) | (!*dest << 7);												/* set Z flag */
+	*flags = *flags | 0x40;																	/* set N flag */
 	*flags = (*flags & 0xd0) | (((uint8_t)((old & 0xf) - ((src + cy) & 0xf)) & 0x10) << 1);	/* set H flag */
-	*flags = (*flags & 0xe0) | (((int)(old - src - cy) < 0) << 4);		/* set CY flag */
+	*flags = (*flags & 0xe0) | (((int)(old - src - cy) < 0) << 4);							/* set CY flag */
 }
 
 /*--------------------------------------------------*/
