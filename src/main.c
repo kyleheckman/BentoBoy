@@ -8,17 +8,18 @@
 #define HRAM 0xff80
 #define WRAM 0xc000
 #define VRAM 0x8000
+#define PROG_START 0x150
+#define STACK_HEAD 0xfffe
 
 int main(int argc, char** argv)
 {
-    uint8_t regs[7];
+    uint8_t regs[8];
     uint8_t ram[RAM_SIZE];
-    memset(regs, 0, 7);
+    memset(regs, 0, 8);
     memset(ram, 0, RAM_SIZE);
 
-    uint8_t flags = 0;
-    uint16_t sp = 0xfffe;       /* Note: stack shares same memory region as high mem (HRAM) */
-    uint16_t pc = 0;            /* set program counter to 0 */
+    uint16_t sp = STACK_HEAD;   /* Note: stack shares same memory region as high mem (HRAM) */
+    uint16_t pc = PROG_START;   /* set program counter entry point */
 
 
 }
