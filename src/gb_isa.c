@@ -1,5 +1,4 @@
 #include "gb_isa.h"
-#define PROG_START 0x150
 
 /*--------------------------------------------------*/
 /* loads dest into pc if flags meet cond */
@@ -8,7 +7,7 @@ void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond) {
 	switch (cond) {
 		case 0: if (!(*flags & 0x80)) {*pc = dest;} break;	/* NZ: Z == 0 */
 		case 1: if (*flags & 0x80) {*pc = dest;} break;		/* Z == 1 */
-		case 2: if (!(*flags * 0x10)) {*pc = dest;} break;	/* NC: CY == 0 */
+		case 2: if (!(*flags & 0x10)) {*pc = dest;} break;	/* NC: CY == 0 */
 		case 3: if (*flags & 0x10) {*pc = dest;} break;		/* CY == 1 */
 		default: *pc = dest; break;
 	}
@@ -19,12 +18,77 @@ void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond) {
 /* default is cond not in option is no test condition */
 void jr(int8_t ofs, uint16_t* pc, uint8_t* flags, int cond) {
 	switch (cond) {
-		case 0: if (!(*flags & 0x80)) {*pc = *pc + ofs;} break;	/* NZ: Z == 0 */
+		case 0: if (!(*flags & 0x80)) {*pc = *pc + ofs;} break;		/* NZ: Z == 0 */
 		case 1: if (*flags & 0x80) {*pc = *pc + ofs;} break;		/* Z == 1 */
-		case 2: if (!(*flags * 0x10)) {*pc = *pc + ofs;} break;	/* NC: CY == 0 */
+		case 2: if (!(*flags & 0x10)) {*pc = *pc + ofs;} break;		/* NC: CY == 0 */
 		case 3: if (*flags & 0x10) {*pc = *pc + ofs;} break;		/* CY == 1 */
 		default: *pc = *pc + ofs; break;
 	}
+}
+
+/*--------------------------------------------------*/
+/* calls function at location dest (sets PC to dest) */
+/* default is cond not in option is no test condition */
+void call(uint16_t dest, uint16_t* pc uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond) {
+	/* if conditonal is false return, otherwise load new PC */
+	switch(cond) {
+		case 0: if (*flags & 0x80) {return;} break;		/* NZ: Z == 0 - returns if Z == 1 */
+		case 1: if (!(*flags & 0x80)) {return;} break;	/* Z == 1 - returns if Z == 0 */
+		case 2: if (*flags & 0x10) {return;} break;		/* NC: C == 0 - returns if C == 1*/
+		case 3: if (!(*flags & 0x10)) {return;} break;	/* C == 1 - returns if C == 0 */
+		default:
+	}
+	
+	/* store current PC on stack */
+	*sp = *sp - 1;
+	ram[*sp] = *pc >> 8;
+	*sp = *sp - 1;
+	ram[*sp] = (uint8_t)*pc;
+
+	/* load address of called function to PC */
+	*pc = dest;
+}
+
+/*--------------------------------------------------*/
+/* returns operation to PC before call (PC stored on stack) */
+void ret(uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond) {
+	/* if conditonal is false return, otherwise load new PC */
+	switch(cond) {
+		case 0: if (*flags & 0x80) {return;} break;		/* NZ: Z == 0 - returns if Z == 1 */
+		case 1: if (!(*flags & 0x80)) {return;} break;	/* Z == 1 - returns if Z == 0 */
+		case 2: if (*flags & 0x10) {return;} break;		/* NC: C == 0 - returns if C == 1*/
+		case 3: if (!(*flags & 0x10)) {return;} break;	/* C == 1 - returns if C == 0 */
+		default:
+	}
+	
+	/* reset PC */
+	*pc = ram[*sp] + (ram[*(sp+1)] << 8);
+	*sp = *sp + 2;
+}
+
+/*--------------------------------------------------*/
+/* store current PC on stack and load page 0 location to PC, depending on value of cond */
+void rst(uint16_t* pc, uint16_t *sp, uint8_t* ram, int cond) {
+	uint16_t addr = 0;
+	switch(cond) {
+		case 1: addr = 0x8; break;
+		case 2: addr = 0x10; break;
+		case 3: addr = 0x18; break;
+		case 4: addr = 0x20; break;
+		case 5: addr = 0x28; break;
+		case 6: addr = 0x30; break;
+		case 7: addr = 0x38; break;
+		default:
+	}
+
+	/* store PC to stack */
+	*sp = *sp - 1;
+	ram[*sp] = *pc >> 8;
+	*sp = *sp - 1;
+	ram[*sp] = (uint8_t)*pc;
+
+	/* load new PC */
+	*pc = addr;
 }
 
 /*--------------------------------------------------*/
@@ -139,7 +203,7 @@ void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags) {
 
 /*--------------------------------------------------*/
 /* add value of sp to 16-bit reg pair dest */
-void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t flags) {
+void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t* flags) {
 	uint16_t d16 = (uint16_t)((*dest << 8) + *(dest+1));
 	uint16_t val = d16 + sp;
 	ld_16(dest, val);
@@ -148,6 +212,18 @@ void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t flags) {
 	*flags = (*flags & 0xe0) | (((int)(d16 + sp) > val) << 4);		/* set CY flag */
 	*flags = (*flags & 0xd0) | (((d16 ^ sp ^ val) & 0x100) >> 3);	/* set H flag */
 	*flags = *flags & 0xb0;											/* unset N flag */
+}
+
+/*--------------------------------------------------*/
+/* add signed 8-bit value to sp */
+void add_to_sp(uint16_t* sp, int8_t operand, uint8_t* flags) {
+	uint16_t old = *sp;
+	*sp = *sp + operand;
+
+	/* set flags */
+	*flags = 0;
+	*flags = *flags | (((int)(operand + old) > *sp) << 4);		/* set CY flag */
+	*flags = *flags | (((old ^ sp ^ operand) & 0x100) >> 3);	/* set H flag */
 }
 
 /*--------------------------------------------------*/
@@ -204,20 +280,26 @@ void lcp(uint8_t dest, uint8_t src, uint8_t* flags) {
 }
 
 /*--------------------------------------------------*/
-/* rotates reg A 1 bit left, stores A[7] in CY */
-/*void rlca() {
-	uint8_t cy = regs[0] >> 7;
-	regs[0] = (regs[0] << 1) | cy;
-	flags = flags & ((cy << 7) | 0x70);
-}*/
+/* rotates reg 1 bit left, stores reg[7] in CY, reg[7]->reg[0] */
+void rlc(uint8_t* regs, int r, uint8_t* flags) {
+	uint8_t cy = regs[r] >> 7;
+	regs[r] = (regs[r] << 1) | cy;
+	
+	/* set flags */
+	*flags = 0 | (cy << 4);									/* set CY */
+	*flags = r == 0 ? *flags : *flags | ((!regs[r]) << 7);	/* regs r = rA, Z always 0*/
+}
 
 /*--------------------------------------------------*/
-/* rotates reg A 1 bit right, stores A[0] in CY
-void rrca() {
-	uint8_t cy = (regs[0] & 1) << 7;
-	regs[0] = (regs[0] >> 1) | cy;
-	flags = flags & (cy | 0x70);
-}*/
+/* rotates reg 1 bit right, stores reg[0] in CY, reg[0]->reg[7] */
+void rrc(uint8_t* regs, int r, uint8_t* flags) {
+	uint8_t cy = (regs[r] & 1) << 7;
+	regs[r] = (regs[r] >> 1) | cy;
+
+	/* set flags */
+	*flags = 0 | (cy << 4);									/* set CY */
+	*flags = r == 0 ? *flags : *flags | ((!regs[r]) << 7);	/* regs r = rA, Z always 0*/
+}
 
 /*--------------------------------------------------*/
 /* combines two 8-bit values into 16-bit virtual address */
@@ -230,7 +312,7 @@ uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low) {
 /*--------------------------------------------------*/
 /* fetches next byte in program counter and increments pc */
 uint8_t fetch8(uint8_t* ram, uint16_t* pc) {
-	uint8_t val = ram[*pc + PROG_START];
+	uint8_t val = ram[*pc];
 	*pc++;
 	return val;
 }
@@ -240,7 +322,7 @@ uint8_t fetch8(uint8_t* ram, uint16_t* pc) {
 uint16_t fetch16(uint8_t* ram, uint16_t* pc) {
 	uint16_t val = (uint16_t)(ram[*pc + PROG_START] << 8);
 	*pc++;
-	val = val + ram[*pc + PROG_START];
+	val = val + ram[*pc];
 	*pc++;
 	return val;
 }

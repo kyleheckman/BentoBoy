@@ -19,6 +19,12 @@ void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond);
 
 void jr(uint16_t dest, uint16_t* pc uint8_t* flags, int cond);
 
+void call(uint16_t dest, uint16_t* pc uint16_t* sp, uint8_t* flags, int cond);
+
+void ret(uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond);
+
+void rst(uint16_t* pc, uint16_t *sp, uint8_t* ram, int cond);
+
 /* load & move instructions */
 /*--------------------------------------------------*/
 void ld_8(uint8_t* dest, uint8_t src);
@@ -49,6 +55,8 @@ void add_16(uint8_t* dest, uint8_t* src, uint8_t* flags);
 
 void add_sp_to(uint8_t* dest, uint16_t sp, uint8_t* flags);
 
+void add_to_sp(uint16_t* sp, int8_t operand, uint8_t* flags);
+
 void sub_8(uint8_t* dest, uint8_t src, int sbc, uint8_t* flags);
 
 /* bitwise functions */
@@ -63,6 +71,6 @@ void lor(uint8_t* dest, uint8_t src, uint8_t* flags);
 void lcp(uint8_t dest, uint8_t src, uint8_t* flags);
 
 /* bitwise rotate */
-void rlca();
+void rlc(uint8_t* regs, int r, uint8_t* flags);
 
-void rrca();
+void rrc(uint8_t* regs, int r, uint8_t* flags);
