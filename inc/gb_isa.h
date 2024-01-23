@@ -91,3 +91,5 @@ void srl(uint8_t* reg, uint8_t* flags);
 /* swap */
 void swap(uint8_t* reg, uint8_t* flags)
 
+/* bitwise complement */
+void bit(uint8_t* reg, int bit, uint8_t* flags);

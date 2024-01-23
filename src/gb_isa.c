@@ -368,6 +368,13 @@ void swap(uint8_t* reg, uint8_t* flags) {
 }
 
 /*--------------------------------------------------*/
+/* copies the complement of reg[bit] to Z flag */
+void bit(uint8_t* reg, int bit, uint8_t* flags) {
+	uint8_t zf = (*reg >> bit) & 1;
+	*flags = *flags & 0x30 | (zf << 7);
+}
+
+/*--------------------------------------------------*/
 /* combines two 8-bit values into 16-bit virtual address */
 /* returns the address of location in memory buffer referred to by virtual address */
 uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low) {

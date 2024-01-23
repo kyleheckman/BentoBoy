@@ -343,21 +343,91 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x2e: sra(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
         case 0x2f: sra(&regs[rA], &regs[FL]); break;
         /*-------------------------------------------------------*/
-        case 0x20: swap(&regs[rB], &regs[FL]); break;
-        case 0x21: swap(&regs[rC], &regs[FL]); break;
-        case 0x22: swap(&regs[rD], &regs[FL]); break;
-        case 0x23: swap(&regs[rE], &regs[FL]); break;
-        case 0x24: swap(&regs[rH], &regs[FL]); break;
-        case 0x25: swap(&regs[rL], &regs[FL]); break;
-        case 0x26: swap(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
-        case 0x27: swap(&regs[rA], &regs[FL]); break;
-        case 0x28: srl(&regs[rB], &regs[FL]); break;
-        case 0x29: srl(&regs[rC], &regs[FL]); break;
-        case 0x2a: srl(&regs[rD], &regs[FL]); break;
-        case 0x2b: srl(&regs[rE], &regs[FL]); break;
-        case 0x2c: srl(&regs[rH], &regs[FL]); break;
-        case 0x2d: srl(&regs[rL], &regs[FL]); break;
-        case 0x2e: srl(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
-        case 0x2f: srl(&regs[rA], &regs[FL]); break;
+        case 0x30: swap(&regs[rB], &regs[FL]); break;
+        case 0x31: swap(&regs[rC], &regs[FL]); break;
+        case 0x32: swap(&regs[rD], &regs[FL]); break;
+        case 0x33: swap(&regs[rE], &regs[FL]); break;
+        case 0x34: swap(&regs[rH], &regs[FL]); break;
+        case 0x35: swap(&regs[rL], &regs[FL]); break;
+        case 0x36: swap(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
+        case 0x37: swap(&regs[rA], &regs[FL]); break;
+        case 0x38: srl(&regs[rB], &regs[FL]); break;
+        case 0x39: srl(&regs[rC], &regs[FL]); break;
+        case 0x3a: srl(&regs[rD], &regs[FL]); break;
+        case 0x3b: srl(&regs[rE], &regs[FL]); break;
+        case 0x3c: srl(&regs[rH], &regs[FL]); break;
+        case 0x3d: srl(&regs[rL], &regs[FL]); break;
+        case 0x3e: srl(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x3f: srl(&regs[rA], &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x40: bit(&regs[rB], 0, &regs[FL]); break;
+        case 0x41: bit(&regs[rC], 0, &regs[FL]); break;
+        case 0x42: bit(&regs[rD], 0, &regs[FL]); break;
+        case 0x43: bit(&regs[rE], 0, &regs[FL]); break;
+        case 0x44: bit(&regs[rH], 0, &regs[FL]); break;
+        case 0x45: bit(&regs[rL], 0, &regs[FL]); break;
+        case 0x46: bit(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x47: bit(&regs[rA], 0, &regs[FL]); break;
+        case 0x48: bit(&regs[rB], 1, &regs[FL]); break;
+        case 0x49: bit(&regs[rC], 1, &regs[FL]); break;
+        case 0x4a: bit(&regs[rD], 1, &regs[FL]); break;
+        case 0x4b: bit(&regs[rE], 1, &regs[FL]); break;
+        case 0x4c: bit(&regs[rH], 1, &regs[FL]); break;
+        case 0x4d: bit(&regs[rL], 1, &regs[FL]); break;
+        case 0x4e: bit(deref(ram, regs[rH], regs[rL]), 1, &regs[FL]); break;
+        case 0x4f: bit(&regs[rA], 1, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x50: bit(&regs[rB], 2, &regs[FL]); break;
+        case 0x51: bit(&regs[rC], 2, &regs[FL]); break;
+        case 0x52: bit(&regs[rD], 2, &regs[FL]); break;
+        case 0x53: bit(&regs[rE], 2, &regs[FL]); break;
+        case 0x54: bit(&regs[rH], 2, &regs[FL]); break;
+        case 0x55: bit(&regs[rL], 2, &regs[FL]); break;
+        case 0x56: bit(deref(ram, regs[rH], regs[rL]), 2, &regs[FL]); break;
+        case 0x57: bit(&regs[rA], 2, &regs[FL]); break;
+        case 0x58: bit(&regs[rB], 3, &regs[FL]); break;
+        case 0x59: bit(&regs[rC], 3, &regs[FL]); break;
+        case 0x5a: bit(&regs[rD], 3, &regs[FL]); break;
+        case 0x5b: bit(&regs[rE], 3, &regs[FL]); break;
+        case 0x5c: bit(&regs[rH], 3, &regs[FL]); break;
+        case 0x5d: bit(&regs[rL], 3, &regs[FL]); break;
+        case 0x5e: bit(deref(ram, regs[rH], regs[rL]), 3, &regs[FL]); break;
+        case 0x5f: bit(&regs[rA], 3, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x60: bit(&regs[rB], 4, &regs[FL]); break;
+        case 0x61: bit(&regs[rC], 4, &regs[FL]); break;
+        case 0x62: bit(&regs[rD], 4, &regs[FL]); break;
+        case 0x63: bit(&regs[rE], 4, &regs[FL]); break;
+        case 0x64: bit(&regs[rH], 4, &regs[FL]); break;
+        case 0x65: bit(&regs[rL], 4, &regs[FL]); break;
+        case 0x66: bit(deref(ram, regs[rH], regs[rL]), 4, &regs[FL]); break;
+        case 0x67: bit(&regs[rA], 4, &regs[FL]); break;
+        case 0x68: bit(&regs[rB], 5, &regs[FL]); break;
+        case 0x69: bit(&regs[rC], 5, &regs[FL]); break;
+        case 0x6a: bit(&regs[rD], 5, &regs[FL]); break;
+        case 0x6b: bit(&regs[rE], 5, &regs[FL]); break;
+        case 0x6c: bit(&regs[rH], 5, &regs[FL]); break;
+        case 0x6d: bit(&regs[rL], 5, &regs[FL]); break;
+        case 0x6e: bit(deref(ram, regs[rH], regs[rL]), 5, &regs[FL]); break;
+        case 0x6f: bit(&regs[rA], 5, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x70: bit(&regs[rB], 6, &regs[FL]); break;
+        case 0x71: bit(&regs[rC], 6, &regs[FL]); break;
+        case 0x72: bit(&regs[rD], 6, &regs[FL]); break;
+        case 0x73: bit(&regs[rE], 6, &regs[FL]); break;
+        case 0x74: bit(&regs[rH], 6, &regs[FL]); break;
+        case 0x75: bit(&regs[rL], 6, &regs[FL]); break;
+        case 0x76: bit(deref(ram, regs[rH], regs[rL]), 6, &regs[FL]); break;
+        case 0x77: bit(&regs[rA], 6, &regs[FL]); break;
+        case 0x78: bit(&regs[rB], 7, &regs[FL]); break;
+        case 0x79: bit(&regs[rC], 7, &regs[FL]); break;
+        case 0x7a: bit(&regs[rD], 7, &regs[FL]); break;
+        case 0x7b: bit(&regs[rE], 7, &regs[FL]); break;
+        case 0x7c: bit(&regs[rH], 7, &regs[FL]); break;
+        case 0x7d: bit(&regs[rL], 7, &regs[FL]); break;
+        case 0x7e: bit(deref(ram, regs[rH], regs[rL]), 7, &regs[FL]); break;
+        case 0x7f: bit(&regs[rA], 7, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        
         }
 }
