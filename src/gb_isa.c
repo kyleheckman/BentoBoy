@@ -389,6 +389,31 @@ void setb(uint8_t* reg, int bit) {
 }
 
 /*--------------------------------------------------*/
+/* changes reg to be a binary coded decimal representation of its value */
+/* only follows an add or subtract op */
+void daa(uint8_t* reg, uint8_t* flags) {
+
+}
+
+/*--------------------------------------------------*/
+/* takes the 1's complement of the value in reg */
+void cpl(uint8_t* reg, uint8_t* flags) {
+	*reg = *reg ^ 0xff;
+}
+
+/*--------------------------------------------------*/
+/* flips the current value of the carry flag */
+void ccf(uint8_t* flags) {
+	*flags = *flags ^ 0x40;
+}
+
+/*--------------------------------------------------*/
+/* sets the carry flag, CY->1 */
+void scf(uint8_t* flags) {
+	*flags = *flags | 0x40;
+}
+
+/*--------------------------------------------------*/
 /* combines two 8-bit values into 16-bit virtual address */
 /* returns the address of location in memory buffer referred to by virtual address */
 uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low) {

@@ -99,3 +99,16 @@ void resb(uint8_t* reg, int bit);
 
 /* bit set */
 void setb(uint8_t* reg, int bit);
+
+/* general purpose operations */
+/*--------------------------------------------------*/
+/* binary coded decimal */
+void daa(uint8_t* reg, uint8_t* flags);
+
+/* 1's complement */
+void cpl(uint8_t* reg, uint8_t* flags);
+
+/* carry flag CY operations */
+void ccf(uint8_t* flags);
+
+void scf(uint8_t* flags);

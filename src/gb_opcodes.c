@@ -31,7 +31,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x0e: ld_8(&regs[rC], fetch8(ram, pc)); break;
         case 0x0f: rrc(&regs[rA], 1, &regs[FL]); break;
         /*-------------------------------------------------------*/
-        case 0x10: break;   /* STOP, not implemented */
+        case 0x10: return -1; /* STOP, not implemented */
         case 0x11: ld_16(&regs[rD], fetch16(ram, pc)); break;
         case 0x12: ld_8(deref(ram, regs[rD], regs[rE]), regs[rA]); break;
         case 0x13: inc_16(&regs[rD]); break;
@@ -55,7 +55,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x24: inc_8(&regs[rH], &regs[FL]); break;
         case 0x25: dec_8(&regs[rH], &regs[FL]); break;
         case 0x26: ld_8(&regs[rH], fetch8(ram, pc)); break;
-        case 0x27: /* not implemented */
+        case 0x27: return -1; /* not implemented */
         case 0x28: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 1); break;
         case 0x29: add_16(&regs[rH], &regs[rH], &regs[FL]); break;
         case 0x2a: ld_8(&regs[rA], *deref(ram, regs[rH], regs[rL])); inc_16(&regs[rH]); break;
@@ -63,7 +63,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x2c: inc_8(&regs[rL], &regs[FL]); break;
         case 0x2d: dec_8(&regs[rL], &regs[FL]); break;
         case 0x2e: ld_8(&regs[rL], fetch8(ram, pc)); break;
-        case 0x2f: /* not implemented */
+        case 0x2f: cpl(&regs[rA]); break;
         /*-------------------------------------------------------*/
         case 0x30: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 2); break;
         case 0x31: ld_sp(sp, fetch16(ram, pc)); break;
@@ -72,7 +72,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x34: inc_8(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
         case 0x35: dec_8(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0x36: ld_8(deref(ram, regs[rH], regs[rL]), fetch8(ram, pc)); break;
-        case 0x37: /* not implemented */
+        case 0x37: scf(&regs[FL]); break;
         case 0x38: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 3); break;
         case 0x39: add_sp_to(&regs[rH], *sp); break;
         case 0x3a: ld_8(&regs[rA], *deref(ram, rgs[rH], regs[rL])); dec_16(&regs[rH]); break;
@@ -80,7 +80,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x3c: inc_8(&regs[rA], &regs[FL]); break;
         case 0x3d: dec_8(&regs[rA], &regs[FL]); break;
         case 0x3e: ld_8(&regs[rA], fetch8(ram, pc)); break;
-        case 0x3f: /* not implemented */
+        case 0x3f: ccf(&regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x40: ld_8(&regs[rB], regs[rB]); break;
         case 0x41: ld_8(&regs[rB], regs[rC]); break;
@@ -139,7 +139,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x73: ld_8(deref(ram, regs[rH], regs[rL]), regs[rE]); break;
         case 0x74: ld_8(deref(ram, regs[rH], regs[rL]), regs[rH]); break;
         case 0x75: ld_8(deref(ram, regs[rH], regs[rL]), regs[rL]); break;
-        case 0x76: /* not implemented */
+        case 0x76: return -1; /* not implemented */
         case 0x77: ld_8(deref(ram, regs[rH], regs[rL]), regs[rA]); break;
         case 0x78: ld_8(&regs[rA], regs[rB]); break;
         case 0x79: ld_8(&regs[rA], regs[rC]); break;
@@ -272,7 +272,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xf0: ld_8(&regs[rA], *deref(ram, 0xff, fetch8(ram, pc))); break;
         case 0xf1: pop(&regs[rA], sp, ram); break;
         case 0xf2: ld_8(&regs[rA], *deref(ram, 0xff, regs[rC])); break;
-        case 0xf3: /* not implemented */
+        case 0xf3: return -1; /* not implemented */
         case 0xf4: return -1; /* invalid opcode */
         case 0xf5: push(&regs[rA], sp, ram); break;
         case 0xf6: lor(&regs[rA], fetch8(ram, pc), &regs[FL]); break;
@@ -280,7 +280,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xf8: add_to_sp(sp, fetch8(ram, pc), &regs[FL]); add_sp_to(&regs[rH], sp, &regs[FL]); break;
         case 0xf9: ld_sp(sp, (uint16_t)((regs[rH]<<8)+regs[rL])); break;
         case 0xfa: uint16_t val=fetch16(ram, pc); ld_8(&regs[rA], *deref(ram, val>>8, (uint8_t)val)); break;
-        case 0xfb: /* not implemented */
+        case 0xfb: return -1; /* not implemented */
         case 0xfc: return -1; /* invalid opcode */
         case 0xfd: return -1; /* invalid opcode */
         case 0xfe: lcp(regs[rA], fetch8(ram, pc), &regs[FL]); break;
