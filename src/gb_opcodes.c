@@ -21,7 +21,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x04: inc_8(&regs[rB], &regs[FL]); break;
         case 0x05: dec_8(&regs[rB], &regs[FL]); break;
         case 0x06: ld_8(&regs[rB], fetch8(ram, pc)); break;
-        case 0x07: rlc(regs, rA, &regs[FL]); break;
+        case 0x07: rlc(&regs[rA], 1, &regs[FL]); break;
         case 0x08: ld_16(deref(ram, fetch8(ram, pc), fetch8(ram, pc)), *sp); break;
         case 0x09: add_16(&regs[rH], &regs[rB], &regs[FL]); break;
         case 0x0a: ld_8(&regs[rA], *deref(ram, regs[rB], regs[rC])); break;
@@ -29,7 +29,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x0c: inc_8(&regs[rC], &regs[FL]); break;
         case 0x0d: dec_8(&regs[rC], &regs[FL]); break;
         case 0x0e: ld_8(&regs[rC], fetch8(ram, pc)); break;
-        case 0x0f: rrc(regs, rA, &regs[FL]); break;
+        case 0x0f: rrc(&regs[rA], 1, &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x10: break;   /* STOP, not implemented */
         case 0x11: ld_16(&regs[rD], fetch16(ram, pc)); break;
@@ -38,7 +38,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x14: inc_8(&regs[rD], &regs[FL]); break;
         case 0x15: dec_8(&regs[rD], &regs[FL]); break;
         case 0x16: ld_8(&regs[rD], fetch8(ram, pc)); break;
-        case 0x17: break; /* not implemented */
+        case 0x17: lrot(&regs[rA], 1, &regs[FL]); break;
         case 0x18: jr((int8_t)(ram, pc), pc, &regs[FL], -1); break;
         case 0x19: add_16(&regs[rH], &regs[rD], &regs[FL]); break;
         case 0x1a: ld_16(&regs[rA], *deref(ram, regs[rD], regs[rE])); break;
@@ -46,7 +46,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x1c: inc_8(&regs[rE], &regs[FL]); break;
         case 0x1d: dec_8(&regs[rE], &regs[FL]); break;
         case 0x1e: ld_8(&regs[rE], fetch8(ram, pc)); break;
-        case 0x1f: /* not implemented */
+        case 0x1f: rrot(&regs[rA], 1, &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x20: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 0); break;
         case 0x21: ld_16(&regs[rH], fetch16(ram, pc)); break;
@@ -290,5 +290,41 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
 }
 
 int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t* pc) {
-
+        switch (opcode)
+        {
+        case 0: rlc(&regs[rB], 0, &regs[FL]); break;
+        case 0x01: rlc(&regs[rC], 0, &regs[FL]); break;
+        case 0x02: rlc(&regs[rD], 0, &regs[FL]); break;
+        case 0x03: rlc(&regs[rE], 0, &regs[FL]); break;
+        case 0x04: rlc(&regs[rH], 0, &regs[FL]); break;
+        case 0x05: rlc(&regs[rL], 0, &regs[FL]); break;
+        case 0x06: rlc(deref(raml regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x07: rlc(&regs[rA], 0, &regs[FL]); break;
+        case 0x08: rrc(&regs[rB], 0, &regFL); break;
+        case 0x09: rrc(&regs[rB], 0, &regs[FL]); break;
+        case 0x0a: rrc(&regs[rD], 0, &regs[FL]); break;
+        case 0x0b: rrc(&regs[rE], 0, &regs[FL]); break;
+        case 0x0c: rrc(&regs[rH], 0, &rgs[FL]); break;
+        case 0x0d: rrc(&regs[rL], 0, &regs[FL]); break;
+        case 0x0e: rrc(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x0f: rrc(&regs[rA], 0, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x10: lrot(&regs[rB], 0, &regs[FL]); break;
+        case 0x11: lrot(&regs[rC], 0, &regs[FL]); break;
+        case 0x12: lrot(&regs[rD], 0, &regs[FL]); break;
+        case 0x13: lrot(&regs[rE], 0, &regs[FL]); break;
+        case 0x14: lrot(&regs[rH], 0, &regs[FL]); break;
+        case 0x15: lrot(&regs[rL], 0, &regs[FL]); break;
+        case 0x16: lrot(deref(raml regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x17: lrot(&regs[rA], 0, &regs[FL]); break;
+        case 0x18: rrot(&regs[rB], 0, &regFL); break;
+        case 0x19: rrot(&regs[rB], 0, &regs[FL]); break;
+        case 0x1a: rrot(&regs[rD], 0, &regs[FL]); break;
+        case 0x1b: rrot(&regs[rE], 0, &regs[FL]); break;
+        case 0x1c: rrot(&regs[rH], 0, &rgs[FL]); break;
+        case 0x1d: rrot(&regs[rL], 0, &regs[FL]); break;
+        case 0x1e: rrot(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x1f: rrot(&regs[rA], 0, &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        }
 }

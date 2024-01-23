@@ -281,24 +281,46 @@ void lcp(uint8_t dest, uint8_t src, uint8_t* flags) {
 
 /*--------------------------------------------------*/
 /* rotates reg 1 bit left, stores reg[7] in CY, reg[7]->reg[0] */
-void rlc(uint8_t* regs, int r, uint8_t* flags) {
-	uint8_t cy = regs[r] >> 7;
-	regs[r] = (regs[r] << 1) | cy;
+void rlc(uint8_t* reg, int is_ra, uint8_t* flags) {
+	uint8_t cy = *reg >> 7;
+	*reg = (*reg << 1) | cy;
 	
 	/* set flags */
-	*flags = 0 | (cy << 4);									/* set CY */
-	*flags = r == 0 ? *flags : *flags | ((!regs[r]) << 7);	/* regs r = rA, Z always 0*/
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = is_ra == 1 ? *flags : *flags | ((!*reg) << 7);	/* regs r = rA, Z always 0*/
+}
+
+/*--------------------------------------------------*/
+/* rotates reg 1 bit left, reg[7]->CY, CY->reg[0] */
+void lrot(uint8_t* reg, int is_ra, uint8_t* flags) {
+	uint8_t cy = *reg >> 7;
+	*reg = (*reg << 1) | ((*flags & 0x10) >> 4);
+
+	/* set flags */
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = is_ra == 1 ? *flags : *flags | ((!*reg) << 7);	/* regs r = rA, Z always 0*/
 }
 
 /*--------------------------------------------------*/
 /* rotates reg 1 bit right, stores reg[0] in CY, reg[0]->reg[7] */
-void rrc(uint8_t* regs, int r, uint8_t* flags) {
-	uint8_t cy = (regs[r] & 1) << 7;
-	regs[r] = (regs[r] >> 1) | cy;
+void rrc(uint8_t* reg, int is_ra, uint8_t* flags) {
+	uint8_t cy = *reg & 1;
+	*reg = (*reg >> 1) | (cy << 7);
 
 	/* set flags */
-	*flags = 0 | (cy << 4);									/* set CY */
-	*flags = r == 0 ? *flags : *flags | ((!regs[r]) << 7);	/* regs r = rA, Z always 0*/
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = is_ra == 1 ? *flags : *flags | ((!*reg) << 7);	/* ira == 1->reg == rA, Z always 0*/
+}
+
+/*--------------------------------------------------*/
+/* rotates reg 1 bit right, reg[0]->CY, CY->reg[7] */
+void rrot(uint8_t* reg, int is_ra, uint8_t* flags) {
+	uint8_t cy = *reg & 1;
+	*reg = (*reg >> 1) | (*flags & 0x10) << 3;
+
+	/* set flags */
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = is_ra == 1 ? *flags : *flags | ((!*reg) << 7);	/* ira == 1->reg == rA, Z always 0*/
 }
 
 /*--------------------------------------------------*/

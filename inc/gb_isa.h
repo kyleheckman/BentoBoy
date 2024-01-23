@@ -71,6 +71,10 @@ void lor(uint8_t* dest, uint8_t src, uint8_t* flags);
 void lcp(uint8_t dest, uint8_t src, uint8_t* flags);
 
 /* bitwise rotate */
-void rlc(uint8_t* regs, int r, uint8_t* flags);
+void rlc(uint8_t* reg, int is_ra, uint8_t* flags);
 
-void rrc(uint8_t* regs, int r, uint8_t* flags);
+void lrot(uint8_t* reg, int is_ra, uint8_t* flags);
+
+void rrc(uint8_t* regs, int is_ra, uint8_t* flags);
+
+void rrot(uint8_t* reg, int is_ra, uint8_t* flags);
