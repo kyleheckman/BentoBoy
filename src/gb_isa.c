@@ -29,7 +29,7 @@ void jr(int8_t ofs, uint16_t* pc, uint8_t* flags, int cond) {
 /*--------------------------------------------------*/
 /* calls function at location dest (sets PC to dest) */
 /* default is cond not in option is no test condition */
-void call(uint16_t dest, uint16_t* pc uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond) {
+void call(uint16_t dest, uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond) {
 	/* if conditonal is false return, otherwise load new PC */
 	switch(cond) {
 		case 0: if (*flags & 0x80) {return;} break;		/* NZ: Z == 0 - returns if Z == 1 */
@@ -223,7 +223,7 @@ void add_to_sp(uint16_t* sp, int8_t operand, uint8_t* flags) {
 	/* set flags */
 	*flags = 0;
 	*flags = *flags | (((int)(operand + old) > *sp) << 4);		/* set CY flag */
-	*flags = *flags | (((old ^ sp ^ operand) & 0x100) >> 3);	/* set H flag */
+	*flags = *flags | (((old ^ *sp ^ operand) & 0x100) >> 3);	/* set H flag */
 }
 
 /*--------------------------------------------------*/
@@ -274,9 +274,9 @@ void lor(uint8_t* dest, uint8_t src, uint8_t* flags) {
 /* compares dest & src */
 /* set Z iff equal, set H if src < dest, set CY if src > dest*/
 void lcp(uint8_t dest, uint8_t src, uint8_t* flags) {
-	if (*dest == src) {*flags = 0xc0;}
-	if (*dest < src) {*flags = 0x50;}
-	if (*dest > src) {*flags = 0x60;}
+	if (dest == src) {*flags = 0xc0;}
+	if (dest < src) {*flags = 0x50;}
+	if (dest > src) {*flags = 0x60;}
 }
 
 /*--------------------------------------------------*/
@@ -331,7 +331,7 @@ void sla(uint8_t* reg, uint8_t* flags) {
 
 	/* set flags */
 	*flags = 0 | (cy << 4);	/* set CY */
-	*flags = *flags | (!*reg << 7)	/* set Z */
+	*flags = *flags | (!*reg << 7);	/* set Z */
 }
 
 /*--------------------------------------------------*/
@@ -342,7 +342,7 @@ void sra(uint8_t* reg, uint8_t* flags) {
 
 	/* set flags */
 	*flags = 0 | (cy << 4);	/* set CY */
-	*flags = *flags | (!*reg << 7)	/* set Z */
+	*flags = *flags | (!*reg << 7);	/* set Z */
 }
 
 
@@ -354,7 +354,7 @@ void srl(uint8_t* reg, uint8_t* flags) {
 
 	/* set flags */
 	*flags = 0 | (cy << 4);	/* set CY */
-	*flags = *flags | (!*reg << 7)	/* set Z */
+	*flags = *flags | (!*reg << 7);	/* set Z */
 }
 
 /*--------------------------------------------------*/
@@ -432,7 +432,7 @@ uint8_t fetch8(uint8_t* ram, uint16_t* pc) {
 /*--------------------------------------------------*/
 /* fetches next 2 bytes in program counter and increments pc */
 uint16_t fetch16(uint8_t* ram, uint16_t* pc) {
-	uint16_t val = (uint16_t)(ram[*pc + PROG_START] << 8);
+	uint16_t val = (uint16_t)(ram[*pc] << 8);
 	*pc++;
 	val = val + ram[*pc];
 	*pc++;

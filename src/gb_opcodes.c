@@ -12,7 +12,8 @@
 #define rL 7
 
 int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t* pc) {
-	switch (opcode)
+	uint16_t tmp_val = 0;
+        switch (opcode)
 	{
         case 0: break;	 /* NOP */
         case 0x01: ld_16(&regs[rB], fetch16(ram, pc)); break;
@@ -39,7 +40,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x15: dec_8(&regs[rD], &regs[FL]); break;
         case 0x16: ld_8(&regs[rD], fetch8(ram, pc)); break;
         case 0x17: lrot(&regs[rA], 1, &regs[FL]); break;
-        case 0x18: jr((int8_t)(ram, pc), pc, &regs[FL], -1); break;
+        case 0x18: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], -1); break;
         case 0x19: add_16(&regs[rH], &regs[rD], &regs[FL]); break;
         case 0x1a: ld_16(&regs[rA], *deref(ram, regs[rD], regs[rE])); break;
         case 0x1b: dec_16(&regs[rD]); break;
@@ -63,19 +64,19 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0x2c: inc_8(&regs[rL], &regs[FL]); break;
         case 0x2d: dec_8(&regs[rL], &regs[FL]); break;
         case 0x2e: ld_8(&regs[rL], fetch8(ram, pc)); break;
-        case 0x2f: cpl(&regs[rA]); break;
+        case 0x2f: cpl(&regs[rA], &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x30: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 2); break;
         case 0x31: ld_sp(sp, fetch16(ram, pc)); break;
         case 0x32: ld_8(deref(ram, regs[rH], regs[rL]), regs[rA]); dec_16(&regs[rH]); break;
         case 0x33: *sp = *sp + 1; break;
-        case 0x34: inc_8(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x34: inc_8(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0x35: dec_8(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0x36: ld_8(deref(ram, regs[rH], regs[rL]), fetch8(ram, pc)); break;
         case 0x37: scf(&regs[FL]); break;
         case 0x38: jr((int8_t)fetch8(ram, pc), pc, &regs[FL], 3); break;
-        case 0x39: add_sp_to(&regs[rH], *sp); break;
-        case 0x3a: ld_8(&regs[rA], *deref(ram, rgs[rH], regs[rL])); dec_16(&regs[rH]); break;
+        case 0x39: add_sp_to(&regs[rH], *sp, &regs[FL]); break;
+        case 0x3a: ld_8(&regs[rA], *deref(ram, regs[rH], regs[rL])); dec_16(&regs[rH]); break;
         case 0x3b: *sp = *sp - 1; break;
         case 0x3c: inc_8(&regs[rA], &regs[FL]); break;
         case 0x3d: dec_8(&regs[rA], &regs[FL]); break;
@@ -215,7 +216,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xbb: lcp(regs[rA], regs[rE], &regs[FL]); break;
         case 0xbc: lcp(regs[rA], regs[rH], &regs[FL]); break;
         case 0xbd: lcp(regs[rA], regs[rL], &regs[FL]); break;
-        case 0xbe: lcp(regs[rA], *deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0xbe: lcp(regs[rA], *deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0xbf: lcp(regs[rA], regs[rA], &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0xc0: ret(pc, sp, ram, &regs[FL], 0); break;
@@ -223,13 +224,13 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xc2: jp(fetch16(ram, pc), pc, &regs[FL], 0); break;
         case 0xc3: jp(fetch16(ram, pc), pc, &regs[FL], -1); break;
         case 0xc4: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], 0); break;
-        case 0xc5: push(&regsd[rB], sp, ram); break;
+        case 0xc5: push(&regs[rB], sp, ram); break;
         case 0xc6: add_8(&regs[rA], fetch8(ram, pc), 0, &regs[FL]); break;
         case 0xc7: rst(pc, sp, ram, 0); break;
         case 0xc8: ret(pc, sp, ram, &regs[FL], 1); break;
         case 0xc9: ret(pc, sp, ram, &regs[FL], -1); break;
         case 0xca: jp(fetch16(ram, pc), pc, &regs[FL], 1); break;
-        case 0xcb: return exec_cb(fetch8(ram, pc), regs, ram, &regs[FL], sp, pc);
+        case 0xcb: return exec_cb(fetch8(ram, pc), regs, ram, sp, pc);
         case 0xcc: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], 1); break;
         case 0xcd: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], -11); break;
         case 0xce: add_8(&regs[rA], fetch8(ram, pc), 1, &regs[FL]); break;
@@ -237,7 +238,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         /*-------------------------------------------------------*/
         case 0xd0: ret(pc, sp, ram, &regs[FL], 2); break;
         case 0xd1: pop(&regs[rD], sp, ram); break;
-        case 0xd2: jp(fetch16(ram, pc), pc, flgs, 2); break;
+        case 0xd2: jp(fetch16(ram, pc), pc, &regs[FL], 2); break;
         case 0xd3: return -1; /* invalid opcode */
         case 0xd4: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], 2); break;
         case 0xd5: push(&regs[rD], sp, ram); break;
@@ -262,7 +263,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xe7: rst(pc, sp, ram, 4); break;
         case 0xe8: add_to_sp(sp, fetch8(ram, pc), &regs[FL]); break;
         case 0xe9: jp((uint16_t)((regs[rH]<<8)+regs[rL]), pc, &regs[FL], -1); break;
-        case 0xea: uint16_t val=fetch16(ram, pc); ld_8(deref(ram, val>>8, (uint8_t)val), regs[rA]); break;
+        case 0xea: tmp_val=fetch16(ram, pc); ld_8(deref(ram, tmp_val>>8, (uint8_t)tmp_val), regs[rA]); break;
         case 0xeb: return -1; /* invalid opcode */
         case 0xec: return -1; /* invalid opcode */
         case 0xed: return -1; /* invalid opcode */
@@ -277,14 +278,14 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xf5: push(&regs[rA], sp, ram); break;
         case 0xf6: lor(&regs[rA], fetch8(ram, pc), &regs[FL]); break;
         case 0xf7: rst(pc, sp, ram, 6); break;
-        case 0xf8: add_to_sp(sp, fetch8(ram, pc), &regs[FL]); add_sp_to(&regs[rH], sp, &regs[FL]); break;
+        case 0xf8: add_to_sp(sp, fetch8(ram, pc), &regs[FL]); add_sp_to(&regs[rH], *sp, &regs[FL]); break;
         case 0xf9: ld_sp(sp, (uint16_t)((regs[rH]<<8)+regs[rL])); break;
-        case 0xfa: uint16_t val=fetch16(ram, pc); ld_8(&regs[rA], *deref(ram, val>>8, (uint8_t)val)); break;
+        case 0xfa: tmp_val=fetch16(ram, pc); ld_8(&regs[rA], *deref(ram, tmp_val>>8, (uint8_t)tmp_val)); break;
         case 0xfb: return -1; /* not implemented */
         case 0xfc: return -1; /* invalid opcode */
         case 0xfd: return -1; /* invalid opcode */
         case 0xfe: lcp(regs[rA], fetch8(ram, pc), &regs[FL]); break;
-        case 0xff: rst(pc, sp, ram, 7)
+        case 0xff: rst(pc, sp, ram, 7);
         default: return -1; /* invalid opcode */
 	}
         return 0;
@@ -299,13 +300,13 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x03: rlc(&regs[rE], 0, &regs[FL]); break;
         case 0x04: rlc(&regs[rH], 0, &regs[FL]); break;
         case 0x05: rlc(&regs[rL], 0, &regs[FL]); break;
-        case 0x06: rlc(deref(raml regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x06: rlc(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
         case 0x07: rlc(&regs[rA], 0, &regs[FL]); break;
-        case 0x08: rrc(&regs[rB], 0, &regFL); break;
+        case 0x08: rrc(&regs[rB], 0, &regs[FL]); break;
         case 0x09: rrc(&regs[rB], 0, &regs[FL]); break;
         case 0x0a: rrc(&regs[rD], 0, &regs[FL]); break;
         case 0x0b: rrc(&regs[rE], 0, &regs[FL]); break;
-        case 0x0c: rrc(&regs[rH], 0, &rgs[FL]); break;
+        case 0x0c: rrc(&regs[rH], 0, &regs[FL]); break;
         case 0x0d: rrc(&regs[rL], 0, &regs[FL]); break;
         case 0x0e: rrc(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
         case 0x0f: rrc(&regs[rA], 0, &regs[FL]); break;
@@ -316,18 +317,18 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x13: lrot(&regs[rE], 0, &regs[FL]); break;
         case 0x14: lrot(&regs[rH], 0, &regs[FL]); break;
         case 0x15: lrot(&regs[rL], 0, &regs[FL]); break;
-        case 0x16: lrot(deref(raml regs[rH], regs[rL]), 0, &regs[FL]); break;
+        case 0x16: lrot(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
         case 0x17: lrot(&regs[rA], 0, &regs[FL]); break;
-        case 0x18: rrot(&regs[rB], 0, &regFL); break;
+        case 0x18: rrot(&regs[rB], 0, &regs[FL]); break;
         case 0x19: rrot(&regs[rB], 0, &regs[FL]); break;
         case 0x1a: rrot(&regs[rD], 0, &regs[FL]); break;
         case 0x1b: rrot(&regs[rE], 0, &regs[FL]); break;
-        case 0x1c: rrot(&regs[rH], 0, &rgs[FL]); break;
+        case 0x1c: rrot(&regs[rH], 0, &regs[FL]); break;
         case 0x1d: rrot(&regs[rL], 0, &regs[FL]); break;
         case 0x1e: rrot(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
         case 0x1f: rrot(&regs[rA], 0, &regs[FL]); break;
         /*-------------------------------------------------------*/
-        case 0x20: sla(&regs[rB, &regs[FL]]); break;
+        case 0x20: sla(&regs[rB], &regs[FL]); break;
         case 0x21: sla(&regs[rC], &regs[FL]); break;
         case 0x22: sla(&regs[rD], &regs[FL]); break;
         case 0x23: sla(&regs[rE], &regs[FL]); break;
@@ -341,7 +342,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x2b: sra(&regs[rE], &regs[FL]); break;
         case 0x2c: sra(&regs[rH], &regs[FL]); break;
         case 0x2d: sra(&regs[rL], &regs[FL]); break;
-        case 0x2e: sra(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x2e: sra(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0x2f: sra(&regs[rA], &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x30: swap(&regs[rB], &regs[FL]); break;
@@ -358,7 +359,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x3b: srl(&regs[rE], &regs[FL]); break;
         case 0x3c: srl(&regs[rH], &regs[FL]); break;
         case 0x3d: srl(&regs[rL], &regs[FL]); break;
-        case 0x3e: srl(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x3e: srl(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
         case 0x3f: srl(&regs[rA], &regs[FL]); break;
         /*-------------------------------------------------------*/
         case 0x40: bit(&regs[rB], 0, &regs[FL]); break;
@@ -435,7 +436,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x83: resb(&regs[rE], 0); break;
         case 0x84: resb(&regs[rH], 0); break;
         case 0x85: resb(&regs[rL], 0); break;
-        case 0x86: resb(deref(ram, regs[rH], resg[rL]), 0); break;
+        case 0x86: resb(deref(ram, regs[rH], regs[rL]), 0); break;
         case 0x87: resb(&regs[rA], 0); break;
         case 0x88: resb(&regs[rB], 1); break;
         case 0x89: resb(&regs[rC], 1); break;
@@ -443,7 +444,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x8b: resb(&regs[rE], 1); break;
         case 0x8c: resb(&regs[rH], 1); break;
         case 0x8d: resb(&regs[rL], 1); break;
-        case 0x8e: resb(deref(ram, regs[rH], resg[rL]), 1); break;
+        case 0x8e: resb(deref(ram, regs[rH], regs[rL]), 1); break;
         case 0x8f: resb(&regs[rA], 1); break;
         /*-------------------------------------------------------*/
         case 0x90: resb(&regs[rB], 2); break;
@@ -452,7 +453,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x93: resb(&regs[rE], 2); break;
         case 0x94: resb(&regs[rH], 2); break;
         case 0x95: resb(&regs[rL], 2); break;
-        case 0x96: resb(deref(ram, regs[rH], resg[rL]), 2); break;
+        case 0x96: resb(deref(ram, regs[rH], regs[rL]), 2); break;
         case 0x97: resb(&regs[rA], 2); break;
         case 0x98: resb(&regs[rB], 3); break;
         case 0x99: resb(&regs[rC], 3); break;
@@ -460,7 +461,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x9b: resb(&regs[rE], 3); break;
         case 0x9c: resb(&regs[rH], 3); break;
         case 0x9d: resb(&regs[rL], 3); break;
-        case 0x9e: resb(deref(ram, regs[rH], resg[rL]), 3); break;
+        case 0x9e: resb(deref(ram, regs[rH], regs[rL]), 3); break;
         case 0x9f: resb(&regs[rA], 3); break;
         /*-------------------------------------------------------*/
         case 0xa0: resb(&regs[rB], 4); break;
@@ -469,7 +470,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xa3: resb(&regs[rE], 4); break;
         case 0xa4: resb(&regs[rH], 4); break;
         case 0xa5: resb(&regs[rL], 4); break;
-        case 0xa6: resb(deref(ram, regs[rH], resg[rL]), 4); break;
+        case 0xa6: resb(deref(ram, regs[rH], regs[rL]), 4); break;
         case 0xa7: resb(&regs[rA], 4); break;
         case 0xa8: resb(&regs[rB], 5); break;
         case 0xa9: resb(&regs[rC], 5); break;
@@ -477,7 +478,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xab: resb(&regs[rE], 5); break;
         case 0xac: resb(&regs[rH], 5); break;
         case 0xad: resb(&regs[rL], 5); break;
-        case 0xae: resb(deref(ram, regs[rH], resg[rL]), 5); break;
+        case 0xae: resb(deref(ram, regs[rH], regs[rL]), 5); break;
         case 0xaf: resb(&regs[rA], 5); break;
         /*-------------------------------------------------------*/
         case 0xb0: resb(&regs[rB], 6); break;
@@ -486,7 +487,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xb3: resb(&regs[rE], 6); break;
         case 0xb4: resb(&regs[rH], 6); break;
         case 0xb5: resb(&regs[rL], 6); break;
-        case 0xb6: resb(deref(ram, regs[rH], resg[rL]), 6); break;
+        case 0xb6: resb(deref(ram, regs[rH], regs[rL]), 6); break;
         case 0xb7: resb(&regs[rA], 6); break;
         case 0xb8: resb(&regs[rB], 7); break;
         case 0xb9: resb(&regs[rC], 7); break;
@@ -494,7 +495,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xbb: resb(&regs[rE], 7); break;
         case 0xbc: resb(&regs[rH], 7); break;
         case 0xbd: resb(&regs[rL], 7); break;
-        case 0xbe: resb(deref(ram, regs[rH], resg[rL]), 7); break;
+        case 0xbe: resb(deref(ram, regs[rH], regs[rL]), 7); break;
         case 0xbf: resb(&regs[rA], 7); break;
         /*-------------------------------------------------------*/
         case 0xc0: setb(&regs[rB], 0); break;
@@ -503,7 +504,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xc3: setb(&regs[rE], 0); break;
         case 0xc4: setb(&regs[rH], 0); break;
         case 0xc5: setb(&regs[rL], 0); break;
-        case 0xc6: setb(deref(ram, regs[rH], resg[rL]), 0); break;
+        case 0xc6: setb(deref(ram, regs[rH], regs[rL]), 0); break;
         case 0xc7: setb(&regs[rA], 0); break;
         case 0xc8: setb(&regs[rB], 1); break;
         case 0xc9: setb(&regs[rC], 1); break;
@@ -511,7 +512,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xcb: setb(&regs[rE], 1); break;
         case 0xcc: setb(&regs[rH], 1); break;
         case 0xcd: setb(&regs[rL], 1); break;
-        case 0xce: setb(deref(ram, regs[rH], resg[rL]), 1); break;
+        case 0xce: setb(deref(ram, regs[rH], regs[rL]), 1); break;
         case 0xcf: setb(&regs[rA], 1); break;
         /*-------------------------------------------------------*/
         case 0xd0: setb(&regs[rB], 2); break;
@@ -520,7 +521,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xd3: setb(&regs[rE], 2); break;
         case 0xd4: setb(&regs[rH], 2); break;
         case 0xd5: setb(&regs[rL], 2); break;
-        case 0xd6: setb(deref(ram, regs[rH], resg[rL]), 2); break;
+        case 0xd6: setb(deref(ram, regs[rH], regs[rL]), 2); break;
         case 0xd7: setb(&regs[rA], 2); break;
         case 0xd8: setb(&regs[rB], 3); break;
         case 0xd9: setb(&regs[rC], 3); break;
@@ -528,7 +529,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xdb: setb(&regs[rE], 3); break;
         case 0xdc: setb(&regs[rH], 3); break;
         case 0xdd: setb(&regs[rL], 3); break;
-        case 0xde: setb(deref(ram, regs[rH], resg[rL]), 3); break;
+        case 0xde: setb(deref(ram, regs[rH], regs[rL]), 3); break;
         case 0xdf: setb(&regs[rA], 3); break;
         /*-------------------------------------------------------*/
         case 0xe0: setb(&regs[rB], 4); break;
@@ -537,7 +538,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xe3: setb(&regs[rE], 4); break;
         case 0xe4: setb(&regs[rH], 4); break;
         case 0xe5: setb(&regs[rL], 4); break;
-        case 0xe6: setb(deref(ram, regs[rH], resg[rL]), 4); break;
+        case 0xe6: setb(deref(ram, regs[rH], regs[rL]), 4); break;
         case 0xe7: setb(&regs[rA], 4); break;
         case 0xe8: setb(&regs[rB], 5); break;
         case 0xe9: setb(&regs[rC], 5); break;
@@ -545,7 +546,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xeb: setb(&regs[rE], 5); break;
         case 0xec: setb(&regs[rH], 5); break;
         case 0xed: setb(&regs[rL], 5); break;
-        case 0xee: setb(deref(ram, regs[rH], resg[rL]), 5); break;
+        case 0xee: setb(deref(ram, regs[rH], regs[rL]), 5); break;
         case 0xef: setb(&regs[rA], 5); break;
         /*-------------------------------------------------------*/
         case 0xf0: setb(&regs[rB], 6); break;
@@ -554,7 +555,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xf3: setb(&regs[rE], 6); break;
         case 0xf4: setb(&regs[rH], 6); break;
         case 0xf5: setb(&regs[rL], 6); break;
-        case 0xf6: setb(deref(ram, regs[rH], resg[rL]), 6); break;
+        case 0xf6: setb(deref(ram, regs[rH], regs[rL]), 6); break;
         case 0xf7: setb(&regs[rA], 6); break;
         case 0xf8: setb(&regs[rB], 7); break;
         case 0xf9: setb(&regs[rC], 7); break;
@@ -562,7 +563,7 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0xfb: setb(&regs[rE], 7); break;
         case 0xfc: setb(&regs[rH], 7); break;
         case 0xfd: setb(&regs[rL], 7); break;
-        case 0xfe: setb(deref(ram, regs[rH], resg[rL]), 7); break;
+        case 0xfe: setb(deref(ram, regs[rH], regs[rL]), 7); break;
         case 0xff: setb(&regs[rA], 7); break;
         default: return -1; /* invalid opcode */
         }

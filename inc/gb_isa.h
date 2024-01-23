@@ -17,9 +17,9 @@ uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low);
 /*--------------------------------------------------*/
 void jp(uint16_t dest, uint16_t* pc, uint8_t* flags, int cond);
 
-void jr(uint16_t dest, uint16_t* pc uint8_t* flags, int cond);
+void jr(int8_t ofs, uint16_t* pc, uint8_t* flags, int cond);
 
-void call(uint16_t dest, uint16_t* pc uint16_t* sp, uint8_t* flags, int cond);
+void call(uint16_t dest, uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond);
 
 void ret(uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond);
 
@@ -89,7 +89,7 @@ void sra(uint8_t* reg, uint8_t* flags);
 void srl(uint8_t* reg, uint8_t* flags);
 
 /* swap */
-void swap(uint8_t* reg, uint8_t* flags)
+void swap(uint8_t* reg, uint8_t* flags);
 
 /* bitwise complement */
 void bit(uint8_t* reg, int bit, uint8_t* flags);
