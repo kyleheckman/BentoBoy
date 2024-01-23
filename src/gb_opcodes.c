@@ -229,7 +229,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xc8: ret(pc, sp, ram, &regs[FL], 1); break;
         case 0xc9: ret(pc, sp, ram, &regs[FL], -1); break;
         case 0xca: jp(fetch16(ram, pc), pc, &regs[FL], 1); break;
-        case 0xcb: exec_cb(fetch8(ram, pc), regs, ram, &regs[FL], sp, pc); break;
+        case 0xcb: return exec_cb(fetch8(ram, pc), regs, ram, &regs[FL], sp, pc);
         case 0xcc: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], 1); break;
         case 0xcd: call(fetch16(ram, pc), pc, sp, ram, &regs[FL], -11); break;
         case 0xce: add_8(&regs[rA], fetch8(ram, pc), 1, &regs[FL]); break;
@@ -287,6 +287,7 @@ int exec_instr(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16
         case 0xff: rst(pc, sp, ram, 7)
         default: return -1; /* invalid opcode */
 	}
+        return 0;
 }
 
 int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t* pc) {
@@ -428,6 +429,142 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x7e: bit(deref(ram, regs[rH], regs[rL]), 7, &regs[FL]); break;
         case 0x7f: bit(&regs[rA], 7, &regs[FL]); break;
         /*-------------------------------------------------------*/
-        
+        case 0x80: resb(&regs[rB], 0); break;
+        case 0x81: resb(&regs[rC], 0); break;
+        case 0x82: resb(&regs[rD], 0); break;
+        case 0x83: resb(&regs[rE], 0); break;
+        case 0x84: resb(&regs[rH], 0); break;
+        case 0x85: resb(&regs[rL], 0); break;
+        case 0x86: resb(deref(ram, regs[rH], resg[rL]), 0); break;
+        case 0x87: resb(&regs[rA], 0); break;
+        case 0x88: resb(&regs[rB], 1); break;
+        case 0x89: resb(&regs[rC], 1); break;
+        case 0x8a: resb(&regs[rD], 1); break;
+        case 0x8b: resb(&regs[rE], 1); break;
+        case 0x8c: resb(&regs[rH], 1); break;
+        case 0x8d: resb(&regs[rL], 1); break;
+        case 0x8e: resb(deref(ram, regs[rH], resg[rL]), 1); break;
+        case 0x8f: resb(&regs[rA], 1); break;
+        /*-------------------------------------------------------*/
+        case 0x90: resb(&regs[rB], 2); break;
+        case 0x91: resb(&regs[rC], 2); break;
+        case 0x92: resb(&regs[rD], 2); break;
+        case 0x93: resb(&regs[rE], 2); break;
+        case 0x94: resb(&regs[rH], 2); break;
+        case 0x95: resb(&regs[rL], 2); break;
+        case 0x96: resb(deref(ram, regs[rH], resg[rL]), 2); break;
+        case 0x97: resb(&regs[rA], 2); break;
+        case 0x98: resb(&regs[rB], 3); break;
+        case 0x99: resb(&regs[rC], 3); break;
+        case 0x9a: resb(&regs[rD], 3); break;
+        case 0x9b: resb(&regs[rE], 3); break;
+        case 0x9c: resb(&regs[rH], 3); break;
+        case 0x9d: resb(&regs[rL], 3); break;
+        case 0x9e: resb(deref(ram, regs[rH], resg[rL]), 3); break;
+        case 0x9f: resb(&regs[rA], 3); break;
+        /*-------------------------------------------------------*/
+        case 0xa0: resb(&regs[rB], 4); break;
+        case 0xa1: resb(&regs[rC], 4); break;
+        case 0xa2: resb(&regs[rD], 4); break;
+        case 0xa3: resb(&regs[rE], 4); break;
+        case 0xa4: resb(&regs[rH], 4); break;
+        case 0xa5: resb(&regs[rL], 4); break;
+        case 0xa6: resb(deref(ram, regs[rH], resg[rL]), 4); break;
+        case 0xa7: resb(&regs[rA], 4); break;
+        case 0xa8: resb(&regs[rB], 5); break;
+        case 0xa9: resb(&regs[rC], 5); break;
+        case 0xaa: resb(&regs[rD], 5); break;
+        case 0xab: resb(&regs[rE], 5); break;
+        case 0xac: resb(&regs[rH], 5); break;
+        case 0xad: resb(&regs[rL], 5); break;
+        case 0xae: resb(deref(ram, regs[rH], resg[rL]), 5); break;
+        case 0xaf: resb(&regs[rA], 5); break;
+        /*-------------------------------------------------------*/
+        case 0xb0: resb(&regs[rB], 6); break;
+        case 0xb1: resb(&regs[rC], 6); break;
+        case 0xb2: resb(&regs[rD], 6); break;
+        case 0xb3: resb(&regs[rE], 6); break;
+        case 0xb4: resb(&regs[rH], 6); break;
+        case 0xb5: resb(&regs[rL], 6); break;
+        case 0xb6: resb(deref(ram, regs[rH], resg[rL]), 6); break;
+        case 0xb7: resb(&regs[rA], 6); break;
+        case 0xb8: resb(&regs[rB], 7); break;
+        case 0xb9: resb(&regs[rC], 7); break;
+        case 0xba: resb(&regs[rD], 7); break;
+        case 0xbb: resb(&regs[rE], 7); break;
+        case 0xbc: resb(&regs[rH], 7); break;
+        case 0xbd: resb(&regs[rL], 7); break;
+        case 0xbe: resb(deref(ram, regs[rH], resg[rL]), 7); break;
+        case 0xbf: resb(&regs[rA], 7); break;
+        /*-------------------------------------------------------*/
+        case 0xc0: setb(&regs[rB], 0); break;
+        case 0xc1: setb(&regs[rC], 0); break;
+        case 0xc2: setb(&regs[rD], 0); break;
+        case 0xc3: setb(&regs[rE], 0); break;
+        case 0xc4: setb(&regs[rH], 0); break;
+        case 0xc5: setb(&regs[rL], 0); break;
+        case 0xc6: setb(deref(ram, regs[rH], resg[rL]), 0); break;
+        case 0xc7: setb(&regs[rA], 0); break;
+        case 0xc8: setb(&regs[rB], 1); break;
+        case 0xc9: setb(&regs[rC], 1); break;
+        case 0xca: setb(&regs[rD], 1); break;
+        case 0xcb: setb(&regs[rE], 1); break;
+        case 0xcc: setb(&regs[rH], 1); break;
+        case 0xcd: setb(&regs[rL], 1); break;
+        case 0xce: setb(deref(ram, regs[rH], resg[rL]), 1); break;
+        case 0xcf: setb(&regs[rA], 1); break;
+        /*-------------------------------------------------------*/
+        case 0xd0: setb(&regs[rB], 2); break;
+        case 0xd1: setb(&regs[rC], 2); break;
+        case 0xd2: setb(&regs[rD], 2); break;
+        case 0xd3: setb(&regs[rE], 2); break;
+        case 0xd4: setb(&regs[rH], 2); break;
+        case 0xd5: setb(&regs[rL], 2); break;
+        case 0xd6: setb(deref(ram, regs[rH], resg[rL]), 2); break;
+        case 0xd7: setb(&regs[rA], 2); break;
+        case 0xd8: setb(&regs[rB], 3); break;
+        case 0xd9: setb(&regs[rC], 3); break;
+        case 0xda: setb(&regs[rD], 3); break;
+        case 0xdb: setb(&regs[rE], 3); break;
+        case 0xdc: setb(&regs[rH], 3); break;
+        case 0xdd: setb(&regs[rL], 3); break;
+        case 0xde: setb(deref(ram, regs[rH], resg[rL]), 3); break;
+        case 0xdf: setb(&regs[rA], 3); break;
+        /*-------------------------------------------------------*/
+        case 0xe0: setb(&regs[rB], 4); break;
+        case 0xe1: setb(&regs[rC], 4); break;
+        case 0xe2: setb(&regs[rD], 4); break;
+        case 0xe3: setb(&regs[rE], 4); break;
+        case 0xe4: setb(&regs[rH], 4); break;
+        case 0xe5: setb(&regs[rL], 4); break;
+        case 0xe6: setb(deref(ram, regs[rH], resg[rL]), 4); break;
+        case 0xe7: setb(&regs[rA], 4); break;
+        case 0xe8: setb(&regs[rB], 5); break;
+        case 0xe9: setb(&regs[rC], 5); break;
+        case 0xea: setb(&regs[rD], 5); break;
+        case 0xeb: setb(&regs[rE], 5); break;
+        case 0xec: setb(&regs[rH], 5); break;
+        case 0xed: setb(&regs[rL], 5); break;
+        case 0xee: setb(deref(ram, regs[rH], resg[rL]), 5); break;
+        case 0xef: setb(&regs[rA], 5); break;
+        /*-------------------------------------------------------*/
+        case 0xf0: setb(&regs[rB], 6); break;
+        case 0xf1: setb(&regs[rC], 6); break;
+        case 0xf2: setb(&regs[rD], 6); break;
+        case 0xf3: setb(&regs[rE], 6); break;
+        case 0xf4: setb(&regs[rH], 6); break;
+        case 0xf5: setb(&regs[rL], 6); break;
+        case 0xf6: setb(deref(ram, regs[rH], resg[rL]), 6); break;
+        case 0xf7: setb(&regs[rA], 6); break;
+        case 0xf8: setb(&regs[rB], 7); break;
+        case 0xf9: setb(&regs[rC], 7); break;
+        case 0xfa: setb(&regs[rD], 7); break;
+        case 0xfb: setb(&regs[rE], 7); break;
+        case 0xfc: setb(&regs[rH], 7); break;
+        case 0xfd: setb(&regs[rL], 7); break;
+        case 0xfe: setb(deref(ram, regs[rH], resg[rL]), 7); break;
+        case 0xff: setb(&regs[rA], 7); break;
+        default: return -1; /* invalid opcode */
         }
+        return 0;
 }

@@ -93,3 +93,9 @@ void swap(uint8_t* reg, uint8_t* flags)
 
 /* bitwise complement */
 void bit(uint8_t* reg, int bit, uint8_t* flags);
+
+/* bit reset */
+void resb(uint8_t* reg, int bit);
+
+/* bit set */
+void setb(uint8_t* reg, int bit);

@@ -375,6 +375,20 @@ void bit(uint8_t* reg, int bit, uint8_t* flags) {
 }
 
 /*--------------------------------------------------*/
+/* unset bit, reg[bit]->0*/
+void resb(uint8_t* reg, int bit) {
+	uint8_t mask = 0xff ^ (1 << bit);
+	*reg = *reg & mask;
+}
+
+/*--------------------------------------------------*/
+/* set bit, reg[bit]->1*/
+void setb(uint8_t* reg, int bit) {
+	uint8_t mask = 1 << bit;
+	*reg = *reg | mask;
+}
+
+/*--------------------------------------------------*/
 /* combines two 8-bit values into 16-bit virtual address */
 /* returns the address of location in memory buffer referred to by virtual address */
 uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low) {
