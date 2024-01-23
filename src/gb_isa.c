@@ -324,6 +324,50 @@ void rrot(uint8_t* reg, int is_ra, uint8_t* flags) {
 }
 
 /*--------------------------------------------------*/
+/* shift reg 1 bit left, reg[7]->CY */
+void sla(uint8_t* reg, uint8_t* flags) {
+	uint8_t cy = *reg >> 7;
+	*reg = *reg << 1;
+
+	/* set flags */
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = *flags | (!*reg << 7)	/* set Z */
+}
+
+/*--------------------------------------------------*/
+/* shift reg 1 bit right (arithmetic shift), reg[7]->reg[7], reg[0]->CY */
+void sra(uint8_t* reg, uint8_t* flags) {
+	uint8_t cy = *reg & 1;
+	*reg = (*reg & 0x80) | (*reg >> 1);
+
+	/* set flags */
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = *flags | (!*reg << 7)	/* set Z */
+}
+
+
+/*--------------------------------------------------*/
+/* shift reg 1 bit right (logical shift), 0->reg[7], reg[0]->CY */
+void srl(uint8_t* reg, uint8_t* flags) {
+	uint8_t cy = *reg & 1;
+	*reg = *reg >> 1;
+
+	/* set flags */
+	*flags = 0 | (cy << 4);	/* set CY */
+	*flags = *flags | (!*reg << 7)	/* set Z */
+}
+
+/*--------------------------------------------------*/
+/* swaps low nibble and high nibble in reg, sets Z flags if reg == 0 */
+void swap(uint8_t* reg, uint8_t* flags) {
+	uint8_t high = *reg & 0xf0;
+	*reg = (*reg << 4) | (high >> 4);
+
+	/* set flags */
+	*flags = 0 | (!*reg << 7);
+}
+
+/*--------------------------------------------------*/
 /* combines two 8-bit values into 16-bit virtual address */
 /* returns the address of location in memory buffer referred to by virtual address */
 uint8_t* deref(uint8_t* ram, uint8_t high, uint8_t low) {

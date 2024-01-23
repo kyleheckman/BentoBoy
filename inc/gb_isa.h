@@ -78,3 +78,16 @@ void lrot(uint8_t* reg, int is_ra, uint8_t* flags);
 void rrc(uint8_t* regs, int is_ra, uint8_t* flags);
 
 void rrot(uint8_t* reg, int is_ra, uint8_t* flags);
+
+/* bitwise shift */
+/* arithmetic shift*/
+void sla(uint8_t* reg, uint8_t* flags);
+
+void sra(uint8_t* reg, uint8_t* flags);
+
+/* logical shift */
+void srl(uint8_t* reg, uint8_t* flags);
+
+/* swap */
+void swap(uint8_t* reg, uint8_t* flags)
+

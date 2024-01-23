@@ -326,5 +326,38 @@ int exec_cb(uint8_t opcode, uint8_t* regs, uint8_t* ram, uint16_t* sp, uint16_t*
         case 0x1e: rrot(deref(ram, regs[rH], regs[rL]), 0, &regs[FL]); break;
         case 0x1f: rrot(&regs[rA], 0, &regs[FL]); break;
         /*-------------------------------------------------------*/
+        case 0x20: sla(&regs[rB, &regs[FL]]); break;
+        case 0x21: sla(&regs[rC], &regs[FL]); break;
+        case 0x22: sla(&regs[rD], &regs[FL]); break;
+        case 0x23: sla(&regs[rE], &regs[FL]); break;
+        case 0x24: sla(&regs[rH], &regs[FL]); break;
+        case 0x25: sla(&regs[rL], &regs[FL]); break;
+        case 0x26: sla(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
+        case 0x27: sla(&regs[rA], &regs[FL]); break;
+        case 0x28: sra(&regs[rB], &regs[FL]); break;
+        case 0x29: sra(&regs[rC], &regs[FL]); break;
+        case 0x2a: sra(&regs[rD], &regs[FL]); break;
+        case 0x2b: sra(&regs[rE], &regs[FL]); break;
+        case 0x2c: sra(&regs[rH], &regs[FL]); break;
+        case 0x2d: sra(&regs[rL], &regs[FL]); break;
+        case 0x2e: sra(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x2f: sra(&regs[rA], &regs[FL]); break;
+        /*-------------------------------------------------------*/
+        case 0x20: swap(&regs[rB], &regs[FL]); break;
+        case 0x21: swap(&regs[rC], &regs[FL]); break;
+        case 0x22: swap(&regs[rD], &regs[FL]); break;
+        case 0x23: swap(&regs[rE], &regs[FL]); break;
+        case 0x24: swap(&regs[rH], &regs[FL]); break;
+        case 0x25: swap(&regs[rL], &regs[FL]); break;
+        case 0x26: swap(deref(ram, regs[rH], regs[rL]), &regs[FL]); break;
+        case 0x27: swap(&regs[rA], &regs[FL]); break;
+        case 0x28: srl(&regs[rB], &regs[FL]); break;
+        case 0x29: srl(&regs[rC], &regs[FL]); break;
+        case 0x2a: srl(&regs[rD], &regs[FL]); break;
+        case 0x2b: srl(&regs[rE], &regs[FL]); break;
+        case 0x2c: srl(&regs[rH], &regs[FL]); break;
+        case 0x2d: srl(&regs[rL], &regs[FL]); break;
+        case 0x2e: srl(deref(ram, regs[rH], reg[rL]), &regs[FL]); break;
+        case 0x2f: srl(&regs[rA], &regs[FL]); break;
         }
 }
