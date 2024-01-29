@@ -36,7 +36,7 @@ void call(uint16_t dest, uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flag
 		case 1: if (!(*flags & 0x80)) {return;} break;	/* Z == 1 - returns if Z == 0 */
 		case 2: if (*flags & 0x10) {return;} break;		/* NC: C == 0 - returns if C == 1*/
 		case 3: if (!(*flags & 0x10)) {return;} break;	/* C == 1 - returns if C == 0 */
-		default:
+		default: break;
 	}
 	
 	/* store current PC on stack */
@@ -58,7 +58,7 @@ void ret(uint16_t* pc, uint16_t* sp, uint8_t* ram, uint8_t* flags, int cond) {
 		case 1: if (!(*flags & 0x80)) {return;} break;	/* Z == 1 - returns if Z == 0 */
 		case 2: if (*flags & 0x10) {return;} break;		/* NC: C == 0 - returns if C == 1*/
 		case 3: if (!(*flags & 0x10)) {return;} break;	/* C == 1 - returns if C == 0 */
-		default:
+		default: break;
 	}
 	
 	/* reset PC */
@@ -78,7 +78,7 @@ void rst(uint16_t* pc, uint16_t *sp, uint8_t* ram, int cond) {
 		case 5: addr = 0x28; break;
 		case 6: addr = 0x30; break;
 		case 7: addr = 0x38; break;
-		default:
+		default: break;
 	}
 
 	/* store PC to stack */

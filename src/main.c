@@ -48,13 +48,13 @@ int main(int argc, char** argv)
     /* test of reading opcode functions, ends on NULL op */
     /* NULL op is used for NOP and CB->rlc, not intended to test this functionality */
     uint8_t op = ram[pc];
-    int errno = 0;
+    int en = 0;
     while (op) {
-        errno = exec_instr(op, regs, ram, &sp, &pc);
+        en = exec_instr(op, regs, ram, &sp, &pc);
         pc++;
         op = ram[pc];
-        if (errno) {
-            printf("ERROR CODE: %d | Exiting application...\n\r", errno);
+        if (en) {
+            printf("ERROR CODE: %d | Exiting application...\n\r", en);
             break;
         }
     }
