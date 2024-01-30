@@ -48,3 +48,10 @@ target_link_libraries(test-add16 isa)
 add_test(add_16_norm test-add16 768 15 0)
 add_test(add_16_half_carry test-add16 255 255 32)
 add_test(add_16_carry test-add16 65535 1 48)
+
+# PUSH and POP tests
+add_executable(test-pushpop test-pushpop.c)
+target_link_libraries(test-pushpop isa)
+
+add_test(push_single test-pushpop 1 37)
+add_test(push_multiple test-pushpop 1 37 275 1234)
