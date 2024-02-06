@@ -1,5 +1,6 @@
 #include "gb_isa.h"
 #include "gb_opcodes.h"
+#include "gb_video.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -60,6 +61,36 @@ int main(int argc, char** argv)
     }
 
     printf("REGS: A|%hhd, B|%hhd, C|%hhd, D|%hhd, E|%hhd, H|%hhd, L|%hhd\n\r", regs[0], regs[2], regs[3], regs[4], regs[5], regs[6], regs[7]);
+    /* end test of opcode functions */
+
+    /* begin test of video out functions */
+    openWindow();
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        // Update
+        //----------------------------------------------------------------------------------
+        // TODO: Update your variables here
+        //----------------------------------------------------------------------------------
+
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+            ClearBackground(RAYWHITE);
+
+            DrawText("Congrats! You created your first window!", 0, 20, 20, LIGHTGRAY);
+
+        EndDrawing();
+        //----------------------------------------------------------------------------------
+    }
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+
+    return 0;
+
 
     return 0;
 }
